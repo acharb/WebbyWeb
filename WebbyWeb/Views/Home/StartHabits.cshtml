@@ -2,7 +2,7 @@
 <h2 id="title">Add Daily Habits</h2>
 
 
-                    
+        
 
 
 
@@ -12,12 +12,14 @@
 	<label class="control-label">Add a habit!</label>
 	<input type="text" id="habit" class="form-control " />
 
-    <input type="button" value="Create" id="HabitSubmit">
+    <button class="btn btn-info btn-round btn-xs" data-toggle="modal" data-target="#myModal">
+        Create
+    </button>
 
 </div>
 
-
-<div id='HabitDetails' hidden='true'>
+<!-- old Pop Up -->
+<!-- <div id='HabitDetails' hidden='true'>
     <h2 id ='habitQ'></h2>
     <textarea maxlength="140" size = "100" placeholder = "Description" id="DescriptionInput"></textarea><br>    
 	
@@ -33,18 +35,25 @@
 	</select>
 
 	<input type='button' id="HabitFinalSubmit" value="Create Habit">
+</div> -->
+
+<!--Modal Pop up Content -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Add A Habit!
+            </div>
+            <div class="modal-body">
+                What type of habit is it?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            
+        </div>
+    </div>
 </div>
-
-<div class="row" id="modals">
-                    <div class="col-md-6">
-                        <div class="title">
-                            <h3>Modal</h3>
-                        </div>
-
-                        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                          Launch demo modal
-                        </button>
-                    </div>
-	</div>
+<!-- End Modal -->
 
 <script src="~/js/CreateHabit.js"></script>

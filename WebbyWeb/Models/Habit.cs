@@ -7,10 +7,9 @@ namespace WebbyWeb.Models
     public class Habit
     {
         [Required]
-        public Dictionary<string,List<int>> Habits { get; set; }    //dictionary key is habit name, value is list of integers
-                                                                    //list[0] is habit type, rest are times per day
-
+        public string Name { get; set; }                                                            
+        public TimeSpan[] Times { get; set; }
+        public string Description { get; set; }
 
     }
 }
-//making changes to see if it gets added
