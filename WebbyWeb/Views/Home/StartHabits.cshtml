@@ -1,0 +1,30 @@
+﻿
+
+
+<h2>Add Daily Habits</h2>
+
+
+<form>
+
+	<input type="text" placeholder ="Add a habit!">
+    <input type="button" value="Create" id="HabitSubmit">
+
+
+
+</form>
+
+
+<div id="HabitDetails">
+    <h2>How would you like to track it?</h2>
+	<form>
+        <input type="button" value="Frequency" name="Frequency" onclick="HabitTypeClick('Frequency')">
+		<input type="button" value="Checkmark" name="Checkmark" onclick="HabitTypeClick('Checkmark')">
+		<input type="button" value="Achievability" name="Achievability" onclick="HabitTypeClick()">
+		<input type="button" value="Reminder" name="Reminder" onclick="HabitTypeClick()">
+	</form>
+</div>
+<script>
+$('#HabitSubmit').click(function(){
+    document.getElementById('HabitDetails').style.display='block';
+})
+</script>
