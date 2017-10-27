@@ -15,7 +15,7 @@
 </div>
 
 <!-- ajax submitting form to database -->
-@using (Ajax.BeginForm("StartHabit","Home", new AjaxOptions {HttpMethod = "POST"}))
+@using (Ajax.BeginForm("SaveHabit","Home", new AjaxOptions {HttpMethod = "POST"}))
 {
 <div class="form-horizontal">
 @Html.ValidationSummary(true, "", new { @class = "text-danger" })  
