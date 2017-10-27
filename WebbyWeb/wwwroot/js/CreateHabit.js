@@ -64,5 +64,4 @@ document.querySelector('#HabitFinalSubmit').addEventListener('click',function()
     StoreHabit(newHabit);
 });
 
-
 /*create text file */
