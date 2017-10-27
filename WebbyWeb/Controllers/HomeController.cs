@@ -15,9 +15,9 @@ namespace WebbyWeb.Controllers
             return View();
         }
 
-        public IActionResult StartHabits()
+        public IActionResult StartHabits(Models.Habit Habit)
         {
-            
+            Console.WriteLine(Habit.Name);
 
             return View();
         }
