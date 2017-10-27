@@ -15,16 +15,30 @@ namespace WebbyWeb.Controllers
             return View();
         }
 
-        public IActionResult About()
+        public IActionResult StartHabits()
         {
-            ViewData["Message"] = "Your application description page.";
+            
 
             return View();
         }
 
-        public IActionResult Contact()
+        public IActionResult Habits()
         {
-            ViewData["Message"] = "Your contact page.";
+
+
+            return View();
+        }
+
+        public IActionResult DailyProgress()
+        {
+            
+
+            return View();
+        }
+
+        public IActionResult OverallProgress()
+        {
+
 
             return View();
         }
