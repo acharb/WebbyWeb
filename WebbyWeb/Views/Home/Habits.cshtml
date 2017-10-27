@@ -1,5 +1,17 @@
 ﻿
 See Habits Here
+<br>
+@Html.ActionLink("Click here","Index","Home",null,null)
+<br>
+<!-- @Ajax.ActionLink("Testing","Index",new AjaxOptions{ UpdateTargetId="CustomerList",
+                 InsertionMode = InsertionMode.Replace,
+                 HttpMethod = "GET"
+                 }) -->
+<a data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#CustomerList" href="/Home/Index">Customer from Germany</a>
+
+<br>
+
+
 
 <!-- Carousel! Need to add image -->
 <div class="section" id="carousel">
