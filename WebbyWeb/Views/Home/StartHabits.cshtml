@@ -1,30 +1,44 @@
 ﻿
+<h2 id="title">Add Daily Habits</h2>
 
 
-<h2>Add Daily Habits</h2>
+                    
 
 
-<form>
 
-	<input type="text" placeholder ="Add a habit!">
+
+
+<div id="habitInputForm" class="form-group label-floating">
+	<label class="control-label">Add a habit!</label>
+	<input type="text" id="habit" class="form-control " />
+
     <input type="button" value="Create" id="HabitSubmit">
 
+</div>
 
 
-</form>
+<div id='HabitDetails' hidden='true'>
+    <h2 id ='habitQ'></h2>
+    <textarea maxlength="140" size = "100" placeholder = "Description" id="DescriptionInput"></textarea><br>    
+	
+	Input Time<input type="time" id="TimeSelect"><br>
+	<input type="button" value="Add Time" id="AddTime"><br>
+	<div id="TimesPosting"></div>
+	
+	Text Alarm?<input type="checkbox"><br>
+	<select value="Select Tag Color">
+        <option value="Blue">Blue</option>
+		<option value="Red">Red</option>
+        <option value="Yellow">Yellow</option>
+	</select>
 
-
-<div id="HabitDetails">
-    <h2>How would you like to track it?</h2>
-	<form>
+	<input type='button' id="HabitFinalSubmit" value="Create Habit">
+	<!--buttons-->
+	<!--<form>
         <input type="button" value="Frequency" name="Frequency" onclick="HabitTypeClick('Frequency')">
 		<input type="button" value="Checkmark" name="Checkmark" onclick="HabitTypeClick('Checkmark')">
 		<input type="button" value="Achievability" name="Achievability" onclick="HabitTypeClick()">
 		<input type="button" value="Reminder" name="Reminder" onclick="HabitTypeClick()">
-	</form>
+	</form>-->
 </div>
-<script>
-$('#HabitSubmit').click(function(){
-    document.getElementById('HabitDetails').style.display='block';
-})
-</script>
+<script src="~/js/CreateHabit.js"></script>
