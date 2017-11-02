@@ -57,12 +57,6 @@
 </div>
 <!-- End Modal -->
 
-<!-- Ajax test -->
-
-<form id="TestForm">
-    <input type="text" id="AjaxTest">
-    <button class="btn-default" type="submit">Testing Ajax</button>
-</form>
 
 <script>
     $('#AddTime').click(function(event){
@@ -98,30 +92,6 @@
         )
         $('#habit').val("");    //clear habit name input textbox
         });
-
-
-
-    $('#TestForm').on("submit",function(event){
-        event.preventDefault();
-        console.log($('#AjaxTest').val());
-        $.ajax(
-            {
-                type:"POST",
-                url:"/Home/SaveHabit",
-                data: {
-                    Name:"AjaxTest",
-                    Time:"08:00:00",
-                    Description:"Testing Ajax"
-                }
-            }
-
-
-
-        )
-        });
-
-
-
 </script>
 
 
