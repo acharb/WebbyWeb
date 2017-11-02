@@ -16,4 +16,7 @@
   <ItemGroup>
     <Compile Remove="wwwroot\js\songscript.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
 </Project>

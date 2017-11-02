@@ -5,11 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebbyWeb.Models;
+using WebbyWeb.Data;
 
 namespace WebbyWeb.Controllers
 {
     public class HomeController : Controller
     {
+        HabitContext context;
         public IActionResult Index()
         {
             return View();
@@ -26,6 +28,9 @@ namespace WebbyWeb.Controllers
             Console.WriteLine(Habit.Name);
             Console.WriteLine(Habit.Time);
             Console.WriteLine(Habit.Description);
+
+            context.Add(Habit);
+
             return RedirectToAction("StartHabits");
         }
 
