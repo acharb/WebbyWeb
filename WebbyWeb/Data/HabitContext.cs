@@ -13,6 +13,9 @@ namespace WebbyWeb.Data
         public DbSet<Habit> Habits { get; set; }    //creating database set for entity set (datatable aka Habit)
                                                     //note entity = row
 
-
+        protected override void OnModelCreating(ModelBuilder modelBuilder)  //taking care of pluralization
+        {
+            modelBuilder.Entity<Habit>().ToTable("Habit");
+        }
     }
 }
