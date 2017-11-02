@@ -15,26 +15,6 @@
 
 </div>
 
-<!-- ajax submitting form to database -->
-@using (Ajax.BeginForm("SaveHabit","Home", new AjaxOptions {HttpMethod = "POST"}))
-{
-<div class="form-horizontal">
-@Html.ValidationSummary(true, "", new { @class = "text-danger" })  
-            <div class="form-group">  
-                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })  
-                <div class="col-md-10">  
-                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })  
-                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })  
-                </div>  
-            </div>
-            <div class="form-group">  
-                <div class="col-md-offset-2 col-md-10">  
-                    <input type="submit" value="Save" class="btn btn-primary" />  
-                </div>  
-            </div> 
-</div>
-}
-<!-- Ajax end -->
 
 <!-- Modal Pop up Content -->
 <div class="modal fade" id="myModal" role="dialog">
@@ -54,5 +34,32 @@
     </div>
 </div>
 <!-- End Modal -->
+
+<!-- Ajax test -->
+
+<form id="TestForm">
+    <input type="text">
+    <button class="btn-default" type="submit">Testing Ajax</button>
+</form>
+
+<script>
+    
+    $('#TestForm').on("submit",function(event){
+        event.preventDefault();
+        console.log($(this).val());
+        });
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
 
 <script src="~/js/CreateHabit.js"></script>
