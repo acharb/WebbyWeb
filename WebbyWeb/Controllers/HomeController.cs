@@ -24,6 +24,8 @@ namespace WebbyWeb.Controllers
         public IActionResult SaveHabit(Models.Habit Habit)
         {
             Console.WriteLine(Habit.Name);
+            Console.WriteLine(Habit.Time);
+            Console.WriteLine(Habit.Description);
             return RedirectToAction("StartHabits");
         }
 

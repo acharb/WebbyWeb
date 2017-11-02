@@ -9,7 +9,7 @@
 	<label class="control-label">Add a habit!</label>
 	<input type="text" id="habit" class="form-control " />
 
-    <button class="btn btn-info btn-round btn-xs" data-toggle="modal" data-target="#myModal">
+    <button id="ModalButton" class="btn btn-info btn-round btn-xs" data-toggle="modal" data-target="#myModal">
         Create
     </button>
 
@@ -21,13 +21,35 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                Add A Habit!
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h2 id="HabitChange"></h2>
             </div>
             <div class="modal-body">
-                What type of habit is it?
+                <form id="HabitForm">
+                    <textarea id="HabitDescription" class="form-control" placeholder="Description"></textarea>
+                    <br>
+                    
+                    <!-- <span class="glyphicon glyphicon-time"></span> -->
+                    <div class="row">
+                        <div class="col-sm-4" style="margin-top:0px">
+                            <input id="InputTime" type="time" class="form-control" >
+                        
+                        </div>
+                        <div class="col-sm-4">
+                            <br>
+                            <button id="AddTime" class="btn btn-primary btn-fab btn-fab-mini btn-round btn-xs" style"width:50%">
+                                <i class="material-icons">done</i>
+                            </button>
+                        </div>
+                        
+                    </div>
+                    <div class="row" id="ShowTimes">
+
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="HabitSubmit" type="button" class="btn btn-info" data-dismiss="modal">Save Habit</button>
             </div>
             
         </div>
@@ -38,15 +60,64 @@
 <!-- Ajax test -->
 
 <form id="TestForm">
-    <input type="text">
+    <input type="text" id="AjaxTest">
     <button class="btn-default" type="submit">Testing Ajax</button>
 </form>
 
 <script>
-    
+    $('#AddTime').click(function(event){
+        event.preventDefault();
+        var insertElement = document.createElement('div');
+        insertElement.innerHTML = $('#InputTime').val();
+        $('#ShowTimes')[0].insertAdjacentElement('beforeend',insertElement);
+    });
+
+    $('#ModalButton').click(function(){ //modal title change on open
+        
+        $('#HabitChange')[0].innerHTML="Describe Habit:  " + $('#habit').val();
+    });
+
+    $('#HabitSubmit').click(function(){ //activate form submit
+        $('#HabitForm').submit();
+
+    })
+
+    $('#HabitForm').on("submit",function(event){    //on habit description form submit
+        event.preventDefault();
+        $('#myModal').mod
+        $.ajax(
+            {
+                type:"POST",
+                url:"/Home/SaveHabit",
+                data: {
+                    Name:$('#habit').val(),
+                    Time:$('#InputTime').val(),
+                    Description:$('#HabitDescription').val()
+                }
+            }
+        )
+        $('#habit').val("");    //clear habit name input textbox
+        });
+
+
+
     $('#TestForm').on("submit",function(event){
         event.preventDefault();
-        console.log($(this).val());
+        console.log($('#AjaxTest').val());
+        $.ajax(
+            {
+                type:"POST",
+                url:"/Home/SaveHabit",
+                data: {
+                    Name:"AjaxTest",
+                    Time:"08:00:00",
+                    Description:"Testing Ajax"
+                }
+            }
+
+
+
+        )
         });
 
 

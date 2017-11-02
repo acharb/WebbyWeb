@@ -8,7 +8,7 @@ namespace WebbyWeb.Models
     {
         [Required]
         public string Name { get; set; }                                                            
-        public TimeSpan[] Times { get; set; }
+        public string Time { get; set; }
         public string Description { get; set; }
         
 

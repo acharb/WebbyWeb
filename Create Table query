@@ -1,0 +1,13 @@
+SELECT t.TABLE_NAME FROM INFORMATION_SCHEMA.TABLES t
+SELECT * FROM sys.columns c Where c.object_id=OBJECT_ID('Test')
+SELECT c.name 'Column Name',t.name 'Data Type' FROM sys.types t INNER JOIN sys.columns c ON c.object_id=OBJECT_ID('Habits') AND t.user_type_id=c.user_type_id
+
+CREATE TABLE Habits (
+
+    Name VARCHAR(20),
+    [Time] Time,
+    [Description] VARCHAR(140)
+)
+SELECT * FROM Habits
+
+INSERT INTO Habits VALUES ('First Habit','14:00:00','My First Habit')
