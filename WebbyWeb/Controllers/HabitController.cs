@@ -42,7 +42,7 @@ namespace WebbyWeb.Controllers
             return View(habit);
         }
 
-        // GET: Habit/Create
+        //GET: Habit/Create
         public IActionResult Create()
         {
             return View();

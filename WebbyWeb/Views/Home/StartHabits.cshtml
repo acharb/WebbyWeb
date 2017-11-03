@@ -3,7 +3,7 @@
 
 <h2 id="title">Add Daily Habits</h2>
 
-
+<h2 id="ShowHabits"></h2>
 
 <div id="habitInputForm" class="form-group label-floating">
 	<label class="control-label">Add a habit!</label>
@@ -25,15 +25,18 @@
                 <h2 id="HabitChange"></h2>
             </div>
             <div class="modal-body">
-                <form id="HabitForm">
-                    <textarea id="HabitDescription" class="form-control" placeholder="Description"></textarea>
+                <form id="HabitForm" asp-action="Create">   <!-- Begin Habit form -->
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <textarea asp-for="Description" id="HabitDescription" class="form-control" placeholder="Description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
                     <br>
                     
                     <!-- <span class="glyphicon glyphicon-time"></span> -->
                     <div class="row">
                         <div class="col-sm-4" style="margin-top:0px">
-                            <input id="InputTime" type="time" class="form-control" >
-                        
+                            <label asp-for="Time"></label>
+                            <input asp-for="Time" id="InputTime" type="time" class="form-control" >
+                            <span asp-validation-for="Time" class="text-danger"></span>
                         </div>
                         <div class="col-sm-4">
                             <br>
@@ -46,10 +49,11 @@
                     <div class="row" id="ShowTimes">
 
                     </div>
-                </form>
+                    <button id="HabitSubmit" type="submit" class="btn btn-info" >Save Habit</button>
+                </form> <!-- end habit form -->
             </div>
             <div class="modal-footer">
-                <button id="HabitSubmit" type="button" class="btn btn-info" data-dismiss="modal">Save Habit</button>
+                
             </div>
             
         </div>
@@ -72,18 +76,26 @@
     });
 
     $('#HabitSubmit').click(function(){ //activate form submit
-        $('#HabitForm').submit();
-
+        if($('#HabitForm').valid() ==true)  //if form valid
+        {
+            $('#HabitSubmit')[0].setAttribute("data-dismiss","modal");  //dismiss modal
+            var habitinsert = document.createElement('div');
+            habitinsert.innerHTML=$('#habit').val();
+            $('#ShowHabits')[0].insertAdjacentElement('beforeend',habitinsert);
+            $('#HabitForm').submit();           //submit form to database
+        }
     })
 
     $('#HabitForm').on("submit",function(event){    //on habit description form submit
         event.preventDefault();
-        
+        var token = $("[name='__RequestVerificationToken']").val();
+
         $.ajax(
             {
                 type:"POST",
-                url:"/Home/SaveHabit",
+                url:"/Habit/Create",
                 data: {
+                    __RequestVerificationToken: token,
                     Name:$('#habit').val(),
                     Time:$('#InputTime').val(),
                     Description:$('#HabitDescription').val()
@@ -91,6 +103,8 @@
             }
         )
         $('#habit').val("");    //clear habit name input textbox
+        $('#InputTime').val("");
+        $('#HabitDescription').val("");
         });
 </script>
 
