@@ -19,16 +19,16 @@ namespace WebbyWeb
         {
             BuildWebHost(args).Run();
 
-            using (var context = new HabitContext() ) {
+            //using (var context = new HabitContext() ) {
 
-                context.Add(new Habit
-                {
-                    Name = "Alec",
-                    Time = "08:00:00",
-                    Description = "Testing"
-                });
-                context.SaveChanges();
-            }
+            //    context.Add(new Habit
+            //    {
+            //        Name = "Alec",
+            //        Time = "08:00:00",
+            //        Description = "Testing"
+            //    });
+            //    context.SaveChanges();
+            //}
 
         }
 
