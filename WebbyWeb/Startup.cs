@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using WebbyWeb.Data;
+using WebbyWeb.Models;
 
 namespace WebbyWeb
 {
@@ -23,8 +23,8 @@ namespace WebbyWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             services.AddDbContext<HabitContext>(options =>
-                                                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));  //connecting
+            services.AddDbContext<HabitContext>(options =>
+                                                options.UseSqlite("Data Source = Habit.db"));  //connecting
 
             services.AddMvc();
         }

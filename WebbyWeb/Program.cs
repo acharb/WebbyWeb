@@ -7,7 +7,6 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using WebbyWeb.Data;
 using Microsoft.Extensions.DependencyInjection;
 using WebbyWeb.Models;
 
