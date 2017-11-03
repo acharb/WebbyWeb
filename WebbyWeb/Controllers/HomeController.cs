@@ -12,7 +12,6 @@ namespace WebbyWeb.Controllers
     public class HomeController : Controller
     {
 
-        HabitContext context;
         public IActionResult Index()
         {
             return View();
