@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using WebbyWeb.Data;
 using Microsoft.Extensions.DependencyInjection;
+using WebbyWeb.Models;
 
 namespace WebbyWeb
 {
@@ -18,6 +19,16 @@ namespace WebbyWeb
         {
             BuildWebHost(args).Run();
 
+            using (var context = new HabitContext() ) {
+
+                context.Add(new Habit
+                {
+                    Name = "Alec",
+                    Time = "08:00:00",
+                    Description = "Testing"
+                });
+                context.SaveChanges();
+            }
 
         }
 
