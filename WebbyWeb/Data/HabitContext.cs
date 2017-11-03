@@ -6,9 +6,10 @@ namespace WebbyWeb.Data
 {
     public class HabitContext : DbContext
     {
-        //public HabitContext(DbContextOptions<HabitContext> options) : base(options)
-        //{
-        //}
+        public HabitContext(DbContextOptions<HabitContext> options) : base(options)
+        {
+        }
+
 
         public DbSet<Habit> Habits { get; set; }    //creating database set for entity set (datatable aka Habit)
                                                     //note entity = row
@@ -18,11 +19,11 @@ namespace WebbyWeb.Data
         //    modelBuilder.Entity<Habit>().ToTable("Habit");
         //}
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            // Specify the path of the database here
-            optionsBuilder.UseSqlite("Filename=./HabitDB.db");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    // Specify the path of the database here
+        //    optionsBuilder.UseSqlServer(@"Server=tcp:webbywebserver.database.windows.net,1433;Initial Catalog=WebbyWebDatabase;Persist Security Info=False;User ID={aleccharb21};Password={Charbo21};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+        //}
 
     }
 }
