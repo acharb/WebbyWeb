@@ -10,7 +10,7 @@ namespace WebbyWeb.Models
         public int ID { get; set; }
         [Required]
         public string Name { get; set; }                                                            
-        public string Time { get; set; }
+        public TimeSpan Time { get; set; }
         public string Description { get; set; }
         
 

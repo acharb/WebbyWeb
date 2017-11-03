@@ -25,9 +25,9 @@ namespace WebbyWeb.Controllers
 
         public IActionResult SaveHabit(Models.Habit Habit)
         {
-            //Console.WriteLine(Habit.Name);
-            //Console.WriteLine(Habit.Time);
-            //Console.WriteLine(Habit.Description);
+            Console.WriteLine(Habit.Name);
+            Console.WriteLine(Habit.Time);
+            Console.WriteLine(Habit.Description);
 
             //DbContextOptions<HabitContext> options = new DbContextOptions<Data.HabitContext>();
             //context = new HabitContext(options);
