@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebbyWeb.Models;
 using WebbyWeb.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebbyWeb.Controllers
 {
     public class HomeController : Controller
     {
+
         HabitContext context;
         public IActionResult Index()
         {
@@ -28,6 +30,9 @@ namespace WebbyWeb.Controllers
             Console.WriteLine(Habit.Name);
             Console.WriteLine(Habit.Time);
             Console.WriteLine(Habit.Description);
+
+            DbContextOptions<HabitContext> options = new DbContextOptions<Data.HabitContext>();
+            context = new HabitContext(options);
 
             context.Add(Habit);
 
