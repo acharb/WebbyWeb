@@ -26,6 +26,8 @@ namespace WebbyWeb.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
+                    b.Property<string>("DoneOrNot");
+
                     b.Property<string>("Name")
                         .IsRequired();
 
