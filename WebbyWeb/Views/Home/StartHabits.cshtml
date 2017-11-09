@@ -6,10 +6,10 @@
 <h2 id="ShowHabits"></h2>
 
 <div id="habitInputForm" class="form-group label-floating">
-	<label class="control-label">Add a habit!</label>
+	<label class="control-label">Add a habit</label>
 	<input type="text" id="habit" class="form-control " />
 
-    <button id="ModalButton" class="btn btn-info btn-round btn-xs"  data-target="#myModal">
+    <button id="OpenModalButton" class="btn btn-info btn-round btn-xs"  data-target="#myModal">
         Create
     </button>
 
@@ -25,13 +25,14 @@
                 <h2 id="HabitChange"></h2>
             </div>
             <div class="modal-body">
+
                 <form id="HabitForm" asp-action="Create">   <!-- Begin Habit form -->
+
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <textarea asp-for="Description" form="HabitForm" id="HabitDescription" class="form-control" placeholder="Description"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
+                    <!-- <span asp-validation-for="Description" class="text-danger"></span> -->
                     <br>
-                    
-                    <!-- <span class="glyphicon glyphicon-time"></span> -->
+
                     <div class="row">
                         <div class="col-sm-4" style="margin-top:0px">
                             <input asp-for="Time" id="InputTime" type="time" class="form-control" >
@@ -39,16 +40,16 @@
                         </div>
                         <div class="col-sm-4">
                             <br>
-                            <button id="AddTime" class="btn btn-primary btn-fab btn-fab-mini btn-round btn-xs" style"width:50%">
+                            <button id="AddTimeButton" class="btn btn-primary btn-fab btn-fab-mini btn-round btn-xs" style"width:50%">
                                 <i class="material-icons">done</i>
                             </button>
                         </div>
-                        
-                    </div>
-                    <div class="row" id="ShowTimes">
+                        <div id="ShowTimes" class="col-sm-3">
 
+                        </div>
                     </div>
-                    <button id="HabitSubmit" type="submit" class="btn btn-info" >Save Habit</button>
+
+                    <button id="ModalButtonHabitSubmit" type="submit" class="btn btn-info" >Save Habit</button>
                 </form> <!-- end habit form -->
             </div>
             <div class="modal-footer">
@@ -62,76 +63,75 @@
 
 
 <script>
-    $('#AddTime').click(function(event){
-        event.preventDefault();
-        var insertElement = document.createElement('div');
-        insertElement.innerHTML = $('#InputTime').val();
-        $('#ShowTimes')[0].insertAdjacentElement('beforeend',insertElement);
-    });
 
-    /*function validateTextArea() {
-    var x = $('#HabitDescription').val();
-    if (x == "") {
-        alert("Name must be filled out");
-        return false;
+
+/*event listener for add times button*/
+$('#AddTimeButton')[0].addEventListener('click',function(event){
+    event.preventDefault();
+    PostTimes($('#InputTime')[0].value);
+
+});
+var timesArray=[];
+//When add time button pushed
+function PostTimes(time) 
+{   
+    if(time!=""){
+        $('#ShowTimes')[0].insertAdjacentHTML('beforeend','<div style="color:green">'+time+'</div>');    //div holds the times to add to DB
+        timesArray.push(time);
         }
-        return true;
-    } */
+};
 
-
-
-    $('#ModalButton').click(function(event){ //modal title change on open
+//Open Modal on create habit button
+$('#OpenModalButton').click(function(event){ 
         event.preventDefault();
         if($('#habit').val() != ""){
-            $('#ModalButton')[0].setAttribute('data-toggle','modal');
+            $('#OpenModalButton')[0].setAttribute('data-toggle','modal');   //set data toggle
             $('#HabitChange')[0].innerHTML="Describe:   " + $('#habit').val();
         }
         else{
             alert('Habit must have name');
+            $('#OpenModalButton')[0].setAttribute('data-toggle','');    //reset data toggle for button (prevents being able ot open modal after already having name and then deleting it)
         }
         
-    });
+});
 
-    $('#HabitSubmit').click(function(){ //activate form submit
+//Save Habit button from modal, goes to the submit function below
+$('#ModalButtonHabitSubmit').click(function(){ //activate form submit
         if($('#HabitForm').valid() ==true )  //if form valid
         {
-            $('#HabitSubmit')[0].setAttribute("data-dismiss","modal");  //dismiss modal
-            var habitinsert = document.createElement('div');
-            habitinsert.innerHTML=$('#habit').val();
+            $('#ModalButtonHabitSubmit')[0].setAttribute("data-dismiss","modal");  //dismiss modal
+            var habitinsert = document.createElement('div');        //adding habit name to list added habits
+            habitinsert.innerHTML='<span style="color: green"> + '+ $('#habit').val() +' </span>';
             $('#ShowHabits')[0].insertAdjacentElement('beforeend',habitinsert);
             $('#HabitForm').submit();           //submit form to database
         }
-    })
+});
+   
 
-    $('#HabitForm').on("submit",function(event){    //on habit description form submit
+//on habit form submit (once abive is clicked)
+$('#HabitForm').on("submit",function(event){    
         event.preventDefault();
         var token = $("[name='__RequestVerificationToken']").val();
-
+        console.log(timesArray);
         $.ajax(
             {
                 type:"POST",
                 url:"/Habit/Create",
                 data: {
                     __RequestVerificationToken: token,
-                    Name:$('#habit').val(),
-                    Time:$('#InputTime').val(),
-                    Description:$('#HabitDescription').val()
+                    Name: $('#habit').val(),
+                    Time: timesArray,
+                    Description: $('#HabitDescription').val()
                 }
             }
         )
         $('#habit').val("");    //clear habit name input textbox
         $('#InputTime').val("");
         $('#HabitDescription').val("");
-        });
+        $('#ShowTimes')[0].innerHTML = "";
+        timesArray=[];  //clear times
+});
 </script>
 
 
-
-
-
-
-
-
-
-
-<script src="~/js/CreateHabit.js"></script>
+<!-- <script src="~/js/CreateHabit.js"></script> -->
