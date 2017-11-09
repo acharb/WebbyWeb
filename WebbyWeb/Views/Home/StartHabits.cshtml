@@ -9,7 +9,7 @@
 	<label class="control-label">Add a habit!</label>
 	<input type="text" id="habit" class="form-control " />
 
-    <button id="ModalButton" class="btn btn-info btn-round btn-xs" data-toggle="modal" data-target="#myModal">
+    <button id="ModalButton" class="btn btn-info btn-round btn-xs"  data-target="#myModal">
         Create
     </button>
 
@@ -28,7 +28,6 @@
                 <form id="HabitForm" asp-action="Create">   <!-- Begin Habit form -->
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <textarea asp-for="Description" form="HabitForm" id="HabitDescription" class="form-control" placeholder="Description"></textarea>
-                    <input type="text" asp-for"Description" class="form-control">
                     <span asp-validation-for="Description" class="text-danger"></span>
                     <br>
                     
@@ -70,24 +69,31 @@
         $('#ShowTimes')[0].insertAdjacentElement('beforeend',insertElement);
     });
 
-    function validateTextArea() {
+    /*function validateTextArea() {
     var x = $('#HabitDescription').val();
     if (x == "") {
         alert("Name must be filled out");
         return false;
         }
         return true;
-    }
+    } */
 
 
 
-    $('#ModalButton').click(function(){ //modal title change on open
+    $('#ModalButton').click(function(event){ //modal title change on open
+        event.preventDefault();
+        if($('#habit').val() != ""){
+            $('#ModalButton')[0].setAttribute('data-toggle','modal');
+            $('#HabitChange')[0].innerHTML="Describe:   " + $('#habit').val();
+        }
+        else{
+            alert('Habit must have name');
+        }
         
-        $('#HabitChange')[0].innerHTML="Describe Habit:  " + $('#habit').val();
     });
 
     $('#HabitSubmit').click(function(){ //activate form submit
-        if($('#HabitForm').valid() ==true && validateTextArea()==true)  //if form valid
+        if($('#HabitForm').valid() ==true )  //if form valid
         {
             $('#HabitSubmit')[0].setAttribute("data-dismiss","modal");  //dismiss modal
             var habitinsert = document.createElement('div');

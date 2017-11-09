@@ -3,9 +3,67 @@
 
 
 
-#CalendarContainer{
+#calendar-container{
+    width:100%;
+    
+
+
+}
+
+#calendar-container a{
+    color:#667;
+    text-decoration:none
+}
+
+#calendar ul{
+    list-style:none;
+    padding:0;
+    margin:0;
+    clear:both;
     width:100%
-    background
+}
 
+#calendar li{
+    display:block;
+    float:left;
+    width:100%;
+    padding:5px;
+    box-sizing:border-box;
+    border-bottom: 1px solid #ccc;
+    margin-right: -1px;
+    margin-bottom:-1px
 
+}
+
+#calendar li:hover{
+    background:lightgray
+
+}
+
+.Time{
+    text-align: left;
+    align-items:center;
+    padding:5px;
+    font-size:small;
+    color: black;
+    width:60px;
+    float:left;
+}
+
+.Times .Event {
+    text-align:left;
+    position:relative;
+    margin-left:100px;
+    width:500px;
+    height:40px;
+}
+
+.Times .Event .btn{
+    background:blue;
+    text-align:left;
+    padding-left:10px;
+    padding-bottom:0;
+    padding-top:0;
+    height:30px;
+    width:500px;
 }

@@ -44,6 +44,7 @@ namespace WebbyWeb.Controllers
             return View();
         }
 
+
         public IActionResult DailyProgress()
         {
             

@@ -1,14 +1,138 @@
-﻿
-See Habits Here
+﻿@model WebbyWeb.Models.Habit
+
 
 <div id="calendar-container">
+    <header>
+        <h2 style='font-weight:bold; text-align:center'>Today's Habits</h2>
+    </header>
 
-
-
-
-
-
-
-    
+    <div id="calendar">
+        <ul class="Times">
+            
+        </ul>
+    </div>
 </div>
-	
+
+
+<!-- Begin Modal for viewing habit -->
+<div class="modal fade" id="habitModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h2 id="HabitName"></h2>
+            </div>
+            <div class="modal-body">
+                <div id='HabitDescription'></div>
+            </div>
+            <div class="modal-footer">
+                <button id="completeBtn" class="btn btn-success" data-dismiss="modal" value='false'>Completed</button>
+                <div id="idPlaceholder" style="display:none;"></div>    <!-- button id -->
+                <div id="checkPlaceholder" style="display:none;"></div> <!-- habit checked or not -->
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!-- end modal -->
+
+<script>
+loadCalendar();
+loadEvents();
+var habitMap = new Map();
+
+//load calendar display
+function loadCalendar(){        
+    var start = 1;
+    var end = 24;
+    var offset=6;
+
+    for (var i = start;i<=end;i++){
+        var hour = i+offset;
+        var hourId=i+offset;
+        var amOrPm = ' am';
+        if(hour>=12 && hour<24){
+            hour=i+offset-12;
+            amOrPm=' pm';
+        };
+        if(hour>=24){
+            hour=i+offset-24;
+            hourId=hourId-24;
+            amOrPm=' am';
+        };
+        if(hour==0){hour=12;}
+        //creating times for calendar. Each time gets an ID of their military time.
+        $('.Times').append('<li id='+hourId+'><div class="Time" >'+ hour +amOrPm+'</div></li>');//id is military time
+    }
+}; 
+
+//load events as buttons onto calendar
+function loadEvents (){
+    $.get("/Habit/DetailData", function(data)   
+    {
+        for(var i=0;i<data.length;i++)
+                {
+                    
+                    var entity = data[i];
+                    console.log(entity);
+                    var time=entity.time.slice(0,2);  
+                    var timeDisplay=entity.time.slice(0,5);
+                    var amOrPm=entity.time.slice(8,);
+                    var details=[entity.name,entity.description];
+                    if(time[0]==0){
+                        time = time[1];
+                    }
+                    if(timeDisplay[0]==0){
+                        timeDisplay=timeDisplay.slice(1,)+'<span>&nbsp</span>'+' - '+' <span> &nbsp </span> ';
+                    }
+                    
+                    //adding buttons (events) to times. Buttons get ID of their id from database
+                    $('#'+time).append('<div class="Event"><button value=false id=' + entity.id + 'event'+' class="btn btn-default" onclick=buttonClick('+entity.id+')>'+timeDisplay+entity.name+'</button></div>');
+                    
+                    habitMap.set(entity.id,details);    //add details to habit map [name,description] for pulling details on modal open
+
+                    $('#'+entity.id+'event')[0].setAttribute('data-toggle','modal');    //each button can open/close modal
+                    $('#'+entity.id+'event')[0].setAttribute('data-target','#habitModal');
+                }
+    });
+};
+
+//Habit button click
+function buttonClick(btnId) //when habit button clicked, pulling data from Map (dictionary)
+{
+    $('#HabitName')[0].innerHTML=habitMap.get(btnId)[0];
+    $('#HabitDescription')[0].innerHTML=habitMap.get(btnId)[1];
+    $('#idPlaceholder')[0].innerHTML=btnId+'event';
+    
+    var check = $('#'+btnId+'event')[0].value;  //get button value, false= unchecked, true= checked
+    
+    //complete button in modal changes based on if habit done or not
+    if(check=='true'){ //if habit done,
+        $('#checkPlaceholder')[0].innerHTML = 'true';
+        $('#completeBtn')[0].style.background='red';
+        $('#completeBtn')[0].innerHTML = "Uncomplete";
+        $('#'+btnId+'event')[0].value='false';
+    };
+    if(check=='false'){   //if habit not done
+        $('#checkPlaceholder')[0].innerHTML = 'false';
+        $('#completeBtn')[0].style.background='green';
+        $('#completeBtn')[0].innerHTML = "Complete";
+        $('#'+btnId+'event')[0].value='true';
+    }
+    
+};
+
+//Modal button, changes habit color based off of if completed or not
+$('#completeBtn').click(function(){
+    var check = $('#checkPlaceholder')[0].innerHTML;
+    var id = $('#idPlaceholder')[0].innerHTML;
+    if(check=='false'){
+        $('#'+id)[0].style.background='green';
+    };
+    if(check=='true'){
+        $('#'+id)[0].style.background='blue';
+    };
+    
+});
+
+</script>

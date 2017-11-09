@@ -42,6 +42,13 @@ namespace WebbyWeb.Controllers
             return View(habit);
         }
 
+        //GET detail Data
+        public async Task<IEnumerable<WebbyWeb.Models.Habit>> DetailData()
+        {
+            var habit = await _context.Habit.ToListAsync();
+            return habit;
+        }
+
         //GET: Habit/Create
         public IActionResult Create()
         {
