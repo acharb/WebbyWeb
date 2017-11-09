@@ -11,7 +11,7 @@ namespace WebbyWeb.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        public List<TimeSpan> Time { get; set; }
+        public string Time { get; set; } //string of times, seperated by commas
         [Required]
         public string Description { get; set; }
         
