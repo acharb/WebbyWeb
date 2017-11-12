@@ -3,11 +3,16 @@
 
 <div id="calendar-container">
     <header>
+        <button type="button" class="btn btn-default" data-toggle="popover" data-placement="bottom" title="Popover on bottom" data-content="Here will be some very useful information about his popover." data-container="body">On bottom</button>
+        <br>
+
         <h2 style='font-weight:bold; text-align:center'>Today's Habits</h2>
     </header>
 
     <div id="calendar">
         <ul class="Times">
+            <div class="Event"><button data-toggle="popover" data-placement="bottom" title="Test" data-content="Content" data-container="body" value=false id=' + entity.id + 'event' + index +' class="btn btn-default" >'+entity.name+'</button></div>        <br>
+
             
         </ul>
     </div>
@@ -28,7 +33,7 @@
             <div class="modal-footer">
                 <button id="completeBtn" class="btn btn-success" data-dismiss="modal" value='false'>Completed</button>
                 <div id="idPlaceholder" style="display:none;"></div>    <!-- button id -->
-                <div id="checkPlaceholder" style="display:none;"></div> <!-- habit checked or not -->
+                <div id="checkPlaceholder" style="display:none;"></div> <!-- habit checked or not   -->
             </div>
             
         </div>
@@ -36,10 +41,22 @@
 </div>
 <!-- end modal -->
 
+
+<button onclick="getHabit(2)">test</button>
+
 <script>
+
+// ---------------------CLUES-----------------------
+//button elements have id - entity.id + 'event'+time
+//time elements (list items) have id - hour (military time)
+//habit map is <button id from above, [ entity name, entity description]>
+//each button element has a value attribute telling if complete or not (true or false)
+//modal page has two hidden placeholders: 1. id - gives buttonid that opened modal 2. check - tells if habit was complete or not
+
 loadCalendar();
 loadEvents();
 var habitMap = new Map();
+
 
 //load calendar display
 function loadCalendar(){        
@@ -62,77 +79,174 @@ function loadCalendar(){
         };
         if(hour==0){hour=12;}
         //creating times for calendar. Each time gets an ID of their military time.
-        $('.Times').append('<li id='+hourId+'><div class="Time" >'+ hour +amOrPm+'</div></li>');//id is military time
+        $('.Times').append('<li id='+hourId+'><div class="Time" >'+ hour +amOrPm+'</div></li><br><br><br><br>');//id is military time
     }
 }; 
+
+
 
 //load events as buttons onto calendar
 function loadEvents (){
     $.get("/Habit/DetailData", function(data)   
     {
-        for(var i=0;i<data.length;i++)
-                {
-                    
-                    var entity = data[i];
-                    console.log(entity);
-                    var time=entity.time.slice(0,2);  
-                    var timeDisplay=entity.time.slice(0,5);
-                    var amOrPm=entity.time.slice(8,);
-                    var details=[entity.name,entity.description];
-                    if(time[0]==0){
-                        time = time[1];
-                    }
-                    if(timeDisplay[0]==0){
-                        timeDisplay=timeDisplay.slice(1,)+'<span>&nbsp</span>'+' - '+' <span> &nbsp </span> ';
-                    }
-                    
-                    //adding buttons (events) to times. Buttons get ID of their id from database
-                    $('#'+time).append('<div class="Event"><button value=false id=' + entity.id + 'event'+' class="btn btn-default" onclick=buttonClick('+entity.id+')>'+timeDisplay+entity.name+'</button></div>');
-                    
-                    habitMap.set(entity.id,details);    //add details to habit map [name,description] for pulling details on modal open
 
-                    $('#'+entity.id+'event')[0].setAttribute('data-toggle','modal');    //each button can open/close modal
-                    $('#'+entity.id+'event')[0].setAttribute('data-target','#habitModal');
-                }
+        for(var count=0;count<data.length;count++)
+                {
+                    var entity = data[count];
+                    var timeArray =entity.time.split(',');
+                    
+                    var details=[entity.name,entity.description];   //details of entity for map
+
+                    //adding each time for each habit
+                    for(let index =0;index<timeArray.length;index++)
+                    {
+                        if(timeArray[index]==""){
+                            continue;
+                        };
+                        var time =timeArray[index].slice(0,2);
+                        var timeDisplay=timeArray[index].slice(0,5);
+                        if(time[0]==0)
+                            {
+                                time = time[1];
+                            };
+
+                        if(timeDisplay[0]==0){
+                            timeDisplay=timeDisplay; //.slice(1,)+'<span>&nbsp</span>'+' - '+' <span> &nbsp </span> ';
+                        }
+                        else{
+                            timeDisplay=timeDisplay;
+                        };
+
+                        habitMap.set(entity.id+'event'+index,details);    //add details to habit map [name,description] for pulling details on modal open
+
+
+
+                        //adding buttons (events) to times. Buttons get ID of their id from database +'event' + time. Going to div of time ID
+                        
+                        //help for adding on click functions to buttons
+                        //https://stackoverflow.com/questions/9643311/pass-string-parameter-in-an-onclick-function
+
+                        let input = entity.id+'event'+index;
+                        //need to pass parameter into function as string, if do just variable name function will look for variable
+                        $('#'+time).append('<div class="Event"><button data-toggle="popover" data-placement="bottom" title="Test" data-content="Content" data-container="body" value=false id=' + entity.id + 'event' + index +' class="btn btn-default" >'+entity.name+'</button></div>');
+                        
+
+                        //$('#'+entity.id+'event'+time)[0].addEventListener('click',function(){buttonClick(entity.id+'event'+time)} );          onmouseover="popOver(\''+input+'\')"
+                        // $('#'+entity.id+'event'+index)[0].setAttribute('data-toggle','modal');    //each button can open/close modal
+                        // $('#'+entity.id+'event'+index)[0].setAttribute('data-target','#habitModal');
+                        
+                    };
+                };
     });
 };
+
+function popOver(id){
+    ;
+}
+
+//gets habit from controller
+function getHabit(habitId){//returns either the habit or null if not there
+    return $.ajax(
+            {
+                type:"GET",
+                url:"/Habit/Details/"+habitId,
+                success: function(data){
+                    return data;
+                }
+            }
+        );
+    
+};
+
+
+function postHabit(id,habitContainer){
+    var token = $("[name='__RequestVerificationToken']").val();
+    console.log(habitContainer.name);
+    console.log(id);
+    $.ajax(
+            {
+                type:"POST",
+                url:"/Habit/Edit",
+                data: {
+                    __RequestVerificationToken: token,
+                    ID:id,
+                    Name: habitContainer.name,
+                    Time: habitContainer.time,
+                    Description: habitContainer.description,
+                    DoneOrNot: habitContainer.doneOrNot
+                    
+                }
+            }
+        )
+}
+
+//update Habit in DB
+function updateHabit(habitId,givenDoneOrNot){
+    
+    let idTimeSplit = habitId.split('event');
+    let id = idTimeSplit[0];
+    let indexOfTime = idTimeSplit[1];
+
+    var promise = getHabit(id);
+    promise.success(function (habitContainer){
+        var hold = habitContainer.doneOrNot.split('');  //changing binary string
+
+        hold[indexOfTime]=givenDoneOrNot;
+        habitContainer.doneOrNot=hold.join('');
+        habitContainer.doneOrNot[indexOfTime]=givenDoneOrNot; //binary at given index switches to what givenDoneOrNot is
+
+        postHabit(id,habitContainer);
+    })
+};
+
 
 //Habit button click
 function buttonClick(btnId) //when habit button clicked, pulling data from Map (dictionary)
 {
-    $('#HabitName')[0].innerHTML=habitMap.get(btnId)[0];
-    $('#HabitDescription')[0].innerHTML=habitMap.get(btnId)[1];
-    $('#idPlaceholder')[0].innerHTML=btnId+'event';
+    let habitName = habitMap.get(btnId)[0];
+    let habitDescr = habitMap.get(btnId)[1];
+    $('#HabitName')[0].innerHTML= habitName;
+    $('#HabitDescription')[0].innerHTML=habitDescr;
+    $('#idPlaceholder')[0].innerHTML=btnId;
     
-    var check = $('#'+btnId+'event')[0].value;  //get button value, false= unchecked, true= checked
-    
+    var check = $('#'+btnId)[0].value;  //get button value, false= unchecked, true= checked
+    //console.log(check);
     //complete button in modal changes based on if habit done or not
-    if(check=='true'){ //if habit done,
+    if(check=='true'){   //if habit done
+        //console.log('1');
         $('#checkPlaceholder')[0].innerHTML = 'true';
         $('#completeBtn')[0].style.background='red';
         $('#completeBtn')[0].innerHTML = "Uncomplete";
-        $('#'+btnId+'event')[0].value='false';
+        $('#'+btnId)[0].value='false';
+        
     };
     if(check=='false'){   //if habit not done
+        //console.log('2');
         $('#checkPlaceholder')[0].innerHTML = 'false';
         $('#completeBtn')[0].style.background='green';
         $('#completeBtn')[0].innerHTML = "Complete";
-        $('#'+btnId+'event')[0].value='true';
-    }
-    
-};
+        $('#'+btnId)[0].value='true';
+        
+        
+    }; 
+}; 
+
+
 
 //Modal button, changes habit color based off of if completed or not
-$('#completeBtn').click(function(){
+$('#completeBtn')[0].addEventListener('click',function(){
     var check = $('#checkPlaceholder')[0].innerHTML;
     var id = $('#idPlaceholder')[0].innerHTML;
-    if(check=='false'){
+    //console.log(id);
+    if(check=='false'){ //habit not done, change to done
         $('#'+id)[0].style.background='green';
+        updateHabit(id,1);
     };
-    if(check=='true'){
+    if(check=='true'){ //habit done, change to undone
         $('#'+id)[0].style.background='blue';
+        updateHabit(id,0);
     };
     
-});
+}); 
 
 </script>

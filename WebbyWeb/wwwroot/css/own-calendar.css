@@ -1,8 +1,4 @@
 
-
-
-
-
 #calendar-container{
     width:100%;
     
@@ -29,25 +25,28 @@
     width:100%;
     padding:5px;
     box-sizing:border-box;
-    border-bottom: 1px solid #ccc;
     margin-right: -1px;
-    margin-bottom:-1px
+    margin-bottom:-1px;
 
 }
 
 #calendar li:hover{
-    background:lightgray
+    
 
 }
 
 .Time{
-    text-align: left;
     align-items:center;
-    padding:5px;
-    font-size:small;
-    color: black;
-    width:60px;
+    padding:7px;
+    font-size:medium;
+    color: white;
+    width:70px;
     float:left;
+    background: lightblue;
+    border-radius:25px;
+    text-align:center;
+    font-weight: bold;
+
 }
 
 .Times .Event {
@@ -55,15 +54,21 @@
     position:relative;
     margin-left:100px;
     width:500px;
-    height:40px;
+    height:auto;
 }
 
 .Times .Event .btn{
     background:blue;
-    text-align:left;
+    text-align:center;
     padding-left:10px;
     padding-bottom:0;
     padding-top:0;
-    height:30px;
-    width:500px;
+    height:100px;
+    width:150px;
+    border-radius:10px;
+    font-size:large;
+    text-transform:lowercase;
+    font-weight:100;
+    margin:0px;
 }
+

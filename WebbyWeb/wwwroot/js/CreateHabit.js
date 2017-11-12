@@ -31,6 +31,7 @@ $('#OpenModalButton').click(function(event){
         
 });
 
+
 //Save Habit button from modal, goes to the submit function below
 $('#ModalButtonHabitSubmit').click(function(){ //activate form submit
         if($('#HabitForm').valid() ==true )  //if form valid
@@ -51,11 +52,12 @@ $('#HabitForm').on("submit",function(event){
         
         //converting times array to string
         var timeString="";
+        var doneOrNot="";
         for(var i=0;i<timesArray.length;i++){
-            var timeString = timeString.concat(timesArray[i]+',');
+            timeString = timeString.concat(timesArray[i]+',');
+            doneOrNot = doneOrNot.concat('0'); //0 = not done, 1 =done
         }
 
-        console.log(timesArray);
         $.ajax(
             {
                 type:"POST",
@@ -64,13 +66,15 @@ $('#HabitForm').on("submit",function(event){
                     __RequestVerificationToken: token,
                     Name: $('#habit').val(),
                     Time: timeString,
+                    DoneOrNot: doneOrNot,
                     Description: $('#HabitDescription').val()
                 }
             }
-        )
+        );
         $('#habit').val("");    //clear habit name input textbox
         $('#InputTime').val("");
         $('#HabitDescription').val("");
         $('#ShowTimes')[0].innerHTML = "";
         timesArray=[];  //clear times
+        doneOrNot="";   // clear done or not
 });

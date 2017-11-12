@@ -9,6 +9,7 @@
     <!--     Fonts and icons     -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" />
+    <link href="https://fonts.googleapis.com/css?family=Barlow:300,400" rel="stylesheet" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
 
     <!-- CSS Files -->
@@ -50,6 +51,12 @@
             z-index: 0; 
         }
 
+        body{
+            background:white;
+            font-family: 'Barlow', sans-serif;
+        }
+        
+
     </style>
 
 <!-- ***using creative Time bootstrap framework:
@@ -61,7 +68,7 @@
 <body>
 		
 <!-- NavBar Start-->		
-<nav class="navbar navbar-default" role="navigation" style="background-color:rgba(48, 130, 207, 0.863)">  
+<nav class="navbar navbar-default" role="navigation" style="text-transform:lowercase; color:gray; background-color:white">  
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -74,26 +81,28 @@
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li><a asp-area="" asp-controller="Home" asp-action="StartHabits">Start Habits</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Habits">Habits</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="DailyProgress">Daily Progress</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="OverallProgress">Overall Progress</a></li>
+            <ul class="nav navbar-nav" >
+                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="StartHabits">Start Habits</a></li>
+                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="Habits">Habits</a></li>
+                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="DailyProgress">Daily Progress</a></li>
+                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="OverallProgress">Overall Progress</a></li>
             </ul>
         </div>
     </div>
 </nav>
 <!-- NavBar End-->    
 		
-<div class="wrapper">
-    <!-- <div class="header header-filter" style="background-image: url('./Users/aleccharbonneau/Desktop/WebbyWeb/WebbyWeb/wwwroot/images/mb-bg-fb-08.png'); no-repeat"> &nbsp; </div> -->
+<div class="wrapper" style="text-transform: lowercase">
     
-    <div class="header header-filter" style="background-image: url('https://images.unsplash.com/photo-1423655156442-ccc11daa4e99?crop=entropy&dpr=2&fit=crop&fm=jpg&h=750&ixjsv=2.1.0&ixlib=rb-0.3.5&q=50&w=1450');"></div>
+    <!-- note: changed .header-filter:after of material-kit.css to get rid of background fade look -->
+    <!-- <div class="header header-filter" style="min-height:350px; background-size:contain; background-image: url('/images/ladder_clouds.jpg');"></div>  -->
+    <div class="header header-filter" style="min-height: 70px"></div>
+    <!-- style="background-repeat: no-repeat; background-attachment: fixed;background-position:bottom; background-size:contain; margin: -60px 100px 0px; background-image: url('/images/pyramid_BandW.jpg');" -->
 
 
     <!-- you can use the class main-raised if you want the main area to be as a page with shadows -->
-    <div class="main main-raised">
-        <div class="container">
+    <div class="main main-raised" style="background:white; margin: -60px 200px 0px;"> <!-- margin controls card size -->
+        <div class="container" style="width:inherit">
 
             <!-- here you can add your content -->
             

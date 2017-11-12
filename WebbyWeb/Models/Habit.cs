@@ -14,7 +14,7 @@ namespace WebbyWeb.Models
         public string Time { get; set; } //string of times, seperated by commas
         [Required]
         public string Description { get; set; }
-        public string DoneOrNot { get; set; }   //binary string of done or not done corresponding to time string
+        public string DoneOrNot { get; set; }   //binary string of done or not done corresponding to time string. 0 =not done, 1 = done. eg. 00010
         
 
     }

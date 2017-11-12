@@ -24,25 +24,25 @@ namespace WebbyWeb.Controllers
             return View(await _context.Habit.ToListAsync());
         }
 
-        // GET: Habit/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Habit/Details/5, changed
+        public async Task<WebbyWeb.Models.Habit> Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return null;
             }
 
             var habit = await _context.Habit
                 .SingleOrDefaultAsync(m => m.ID == id);
             if (habit == null)
             {
-                return NotFound();
+                return null;
             }
 
-            return View(habit);
+            return habit;
         }
 
-        //GET detail Data
+        //GET detail Data, changed
         public async Task<IEnumerable<WebbyWeb.Models.Habit>> DetailData()
         {
             var habit = await _context.Habit.ToListAsync();
@@ -97,8 +97,8 @@ namespace WebbyWeb.Controllers
             if (id != habit.ID)
             {
                 return NotFound();
-            }
-
+            };
+            
             if (ModelState.IsValid)
             {
                 try
