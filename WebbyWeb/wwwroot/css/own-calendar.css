@@ -30,10 +30,6 @@
 
 }
 
-#calendar li:hover{
-    
-
-}
 
 .Time{
     align-items:center;
@@ -57,7 +53,7 @@
     height:auto;
 }
 
-.Times .Event .btn{
+#calendar li .btn .btn-custom {
     background:blue;
     text-align:center;
     padding-left:10px;

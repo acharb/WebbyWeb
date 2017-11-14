@@ -122,6 +122,27 @@ namespace WebbyWeb.Controllers
             return View(habit);
         }
 
+        //Edit Habit in DB
+        [HttpPost]
+        public async Task<IActionResult> EditHabit(Habit habit)
+        {
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(habit);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(habit);
+        }
+        
+
         // GET: Habit/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -154,6 +175,12 @@ namespace WebbyWeb.Controllers
         private bool HabitExists(int id)
         {
             return _context.Habit.Any(e => e.ID == id);
+        }
+        public IActionResult TestPost(Habit habit)
+        {
+            Console.WriteLine(habit);
+            return Json(habit);
+
         }
     }
 }

@@ -1,18 +1,19 @@
-﻿@model WebbyWeb.Models.Habit
+﻿@model IEnumerable<WebbyWeb.Models.Habit>
 
+@{
+    ViewData["Title"] = "Index";
+}
 
 <div id="calendar-container">
     <header>
-        <button type="button" class="btn btn-default" data-toggle="popover" data-placement="bottom" title="Popover on bottom" data-content="Here will be some very useful information about his popover." data-container="body">On bottom</button>
         <br>
 
         <h2 style='font-weight:bold; text-align:center'>Today's Habits</h2>
+        <button id="testButton" value='test'>Test</button>
     </header>
 
     <div id="calendar">
         <ul class="Times">
-            <div class="Event"><button data-toggle="popover" data-placement="bottom" title="Test" data-content="Content" data-container="body" value=false id=' + entity.id + 'event' + index +' class="btn btn-default" >'+entity.name+'</button></div>        <br>
-
             
         </ul>
     </div>
@@ -42,21 +43,63 @@
 <!-- end modal -->
 
 
-<button onclick="getHabit(2)">test</button>
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Time)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+			    <th>
+                    @Html.DisplayNameFor(model => model.DoneOrNot)
+                </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr id=@item.ID>
+            <td id='Name'>
+                
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td id='HabitTime'>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td id='HabitDescr'>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+			<td id='HabitDoneOrNot'>
+                @Html.DisplayFor(modelItem => item.DoneOrNot)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+            
+        </tr>
+
+}
+    </tbody>
+</table>
+
+
 
 <script>
 
 // ---------------------CLUES-----------------------
-//button elements have id - entity.id + 'event'+time
-//time elements (list items) have id - hour (military time)
-//habit map is <button id from above, [ entity name, entity description]>
+//button elements have id: entity # from DB + 'event'+ index of time
+//time elements (list items) have id: hour (military time) + 'time'
 //each button element has a value attribute telling if complete or not (true or false)
-//modal page has two hidden placeholders: 1. id - gives buttonid that opened modal 2. check - tells if habit was complete or not
 
 loadCalendar();
 loadEvents();
-var habitMap = new Map();
-
 
 //load calendar display
 function loadCalendar(){        
@@ -79,17 +122,107 @@ function loadCalendar(){
         };
         if(hour==0){hour=12;}
         //creating times for calendar. Each time gets an ID of their military time.
-        $('.Times').append('<li id='+hourId+'><div class="Time" >'+ hour +amOrPm+'</div></li><br><br><br><br>');//id is military time
+        $('.Times').append('<li id='+hourId+'time><div class="Time" >'+ hour +amOrPm+'</div></li><br><br><br><br>');//id is military time
     }
 }; 
 
-
-
-//load events as buttons onto calendar
+//load events, get wether done or not from DB
 function loadEvents (){
-    $.get("/Habit/DetailData", function(data)   
-    {
+    var habitMap;
+    var count=1;
+    while (count >0){
+        var entity = $('#'+count)[0];
+        count++;
+        if(entity == null){
+            count=-1;
+            break;
+        }
+        var timeArray = entity.children.HabitTime.innerText.split(',');
+        var name=entity.children.Name.innerText;
+        var entityDescription=entity.children.HabitDescr.innerText;
+        var entityId = entity.id;
+        var details=[name,entityDescription];   //details of entity for map
 
+        
+        //adding each time for each habit
+        for(let index =0;index<timeArray.length;index++)
+            {
+                if(timeArray[index]==""){
+                    continue;
+                };
+
+                var time =timeArray[index].slice(0,2);
+                var timeDisplay=timeArray[index].slice(0,5);
+
+                if(time[0]==0){
+                    time = time[1];
+                };
+                
+                if(timeDisplay[0]==0){
+                    timeDisplay=timeDisplay; //.slice(1,)+'<span>&nbsp</span>'+' - '+' <span> &nbsp </span> ';
+                }
+                else{
+                    timeDisplay=timeDisplay;
+                };
+
+                //habitMap.set(entity.id+'event'+index,details);    //add details to habit map [name,description] for pulling details on modal open
+
+
+                        //adding buttons (events) to times. Buttons get ID of their id from database +'event' + time. Going to div of time ID
+                        
+                        //help for adding on click functions to buttons
+                        //https://stackoverflow.com/questions/9643311/pass-string-parameter-in-an-onclick-function
+
+                let buttonId = entityId+'event'+index;
+
+                //create button  
+                let newButton = document.createElement('BUTTON');
+                        newButton.className = 'btn btn-custom';
+                        newButton.id=buttonId;
+                        //popup setup
+                        newButton.setAttribute('data-toggle','popover');
+                        newButton.setAttribute('data-trigger','hover');
+                        newButton.title=timeDisplay;
+                        newButton.setAttribute('data-content',entityDescription);
+                        newButton.setAttribute('data-container','body');
+                        //style
+                        newButton.style.margin='0px 0px 0px 5px';
+                        newButton.style.textTransform='lowercase';
+                        newButton.style.backgroundColor='blue';
+                        
+                        //hidden values
+                        newButton.value='false';
+                        
+                        //inner Text
+                        newButton.innerHTML=name;
+                $('#'+time+'time').append(newButton);
+
+
+
+                        //$('#'+time).append('<div class="Event"><button data-toggle="popover" data-placement="bottom" title="Test" data-content="Content" data-container="body" value=false id=' + entity.id + 'event' + index +' class="btn btn-default" >'+entity.name+'</button></div>');
+                        
+
+                        $('#'+buttonId)[0].addEventListener('click',function(){buttonClick(buttonId)} ); 
+                        // $('#'+entity.id+'event'+index)[0].setAttribute('data-toggle','modal');    //each button can open/close modal
+                        // $('#'+entity.id+'event'+index)[0].setAttribute('data-target','#habitModal');
+                        
+                    };
+                };
+                
+};
+
+
+/*
+//load events as buttons onto calendar
+function load (){
+    var ready = $.get("/Habit/DetailData", function(data)   
+    { return data;});
+
+    
+
+    return ready.done(function(data){
+
+    
         for(var count=0;count<data.length;count++)
                 {
                     var entity = data[count];
@@ -120,7 +253,6 @@ function loadEvents (){
                         habitMap.set(entity.id+'event'+index,details);    //add details to habit map [name,description] for pulling details on modal open
 
 
-
                         //adding buttons (events) to times. Buttons get ID of their id from database +'event' + time. Going to div of time ID
                         
                         //help for adding on click functions to buttons
@@ -128,7 +260,22 @@ function loadEvents (){
 
                         let input = entity.id+'event'+index;
                         //need to pass parameter into function as string, if do just variable name function will look for variable
-                        $('#'+time).append('<div class="Event"><button data-toggle="popover" data-placement="bottom" title="Test" data-content="Content" data-container="body" value=false id=' + entity.id + 'event' + index +' class="btn btn-default" >'+entity.name+'</button></div>');
+                        
+                        let newButton = document.createElement('BUTTON');
+                        newButton.className = 'btn btn-default';
+                        newButton.id=input;
+                        newButton.setAttribute('data-toggle','popover');
+                        newButton.setAttribute('data-trigger','hover');
+                        newButton.setAttribute('data-content','Content');
+                        newButton.setAttribute('data-container','body');
+                        //newButton.value='false';
+                        //newButton.title="Test";
+                        
+                        $('#'+time).append(newButton);
+
+
+
+                        //$('#'+time).append('<div class="Event"><button data-toggle="popover" data-placement="bottom" title="Test" data-content="Content" data-container="body" value=false id=' + entity.id + 'event' + index +' class="btn btn-default" >'+entity.name+'</button></div>');
                         
 
                         //$('#'+entity.id+'event'+time)[0].addEventListener('click',function(){buttonClick(entity.id+'event'+time)} );          onmouseover="popOver(\''+input+'\')"
@@ -137,16 +284,14 @@ function loadEvents (){
                         
                     };
                 };
+                return habitMap;
     });
 };
-
-function popOver(id){
-    ;
-}
+*/
 
 //gets habit from controller
 function getHabit(habitId){//returns either the habit or null if not there
-    return $.ajax(
+    var ret= $.ajax(
             {
                 type:"GET",
                 url:"/Habit/Details/"+habitId,
@@ -155,32 +300,37 @@ function getHabit(habitId){//returns either the habit or null if not there
                 }
             }
         );
-    
+    return ret.done();
 };
 
-
+//posts habit to DB
 function postHabit(id,habitContainer){
     var token = $("[name='__RequestVerificationToken']").val();
-    console.log(habitContainer.name);
-    console.log(id);
+    console.log(habitContainer);
     $.ajax(
             {
                 type:"POST",
-                url:"/Habit/Edit",
+                url:"/Habit/EditHabit",
                 data: {
-                    __RequestVerificationToken: token,
                     ID:id,
                     Name: habitContainer.name,
                     Time: habitContainer.time,
                     Description: habitContainer.description,
                     DoneOrNot: habitContainer.doneOrNot
                     
-                }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    
+                    console.log(ajaxOptions.toString());
+                    console.log(thrownError.toString());
+                },
+                success: function(){console.log('updated Habit')}
+                
             }
         )
 }
 
-//update Habit in DB
+//update Habit in DB (uses getHabit and posthabit)
 function updateHabit(habitId,givenDoneOrNot){
     
     let idTimeSplit = habitId.split('event');
@@ -199,39 +349,28 @@ function updateHabit(habitId,givenDoneOrNot){
     })
 };
 
-
 //Habit button click
 function buttonClick(btnId) //when habit button clicked, pulling data from Map (dictionary)
 {
-    let habitName = habitMap.get(btnId)[0];
-    let habitDescr = habitMap.get(btnId)[1];
-    $('#HabitName')[0].innerHTML= habitName;
-    $('#HabitDescription')[0].innerHTML=habitDescr;
-    $('#idPlaceholder')[0].innerHTML=btnId;
     
     var check = $('#'+btnId)[0].value;  //get button value, false= unchecked, true= checked
-    //console.log(check);
-    //complete button in modal changes based on if habit done or not
+
     if(check=='true'){   //if habit done
         //console.log('1');
-        $('#checkPlaceholder')[0].innerHTML = 'true';
-        $('#completeBtn')[0].style.background='red';
-        $('#completeBtn')[0].innerHTML = "Uncomplete";
+
         $('#'+btnId)[0].value='false';
-        
+        $('#'+btnId)[0].style.backgroundColor='blue';
+        updateHabit(btnId,0);
     };
     if(check=='false'){   //if habit not done
         //console.log('2');
-        $('#checkPlaceholder')[0].innerHTML = 'false';
-        $('#completeBtn')[0].style.background='green';
-        $('#completeBtn')[0].innerHTML = "Complete";
+
         $('#'+btnId)[0].value='true';
-        
-        
-    }; 
+        $('#'+btnId)[0].style.backgroundColor='green';
+        updateHabit(btnId,1);
+    };
+    
 }; 
-
-
 
 //Modal button, changes habit color based off of if completed or not
 $('#completeBtn')[0].addEventListener('click',function(){
@@ -248,5 +387,8 @@ $('#completeBtn')[0].addEventListener('click',function(){
     };
     
 }); 
+
+
+
 
 </script>

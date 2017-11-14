@@ -12,6 +12,12 @@ namespace WebbyWeb.Controllers
     public class HomeController : Controller
     {
 
+        private readonly HabitContext _context;
+
+        public HomeController(HabitContext context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
             return View();
@@ -37,11 +43,9 @@ namespace WebbyWeb.Controllers
             return RedirectToAction("StartHabits");
         }
 
-        public IActionResult Habits()
+        public async Task<IActionResult> Habits()
         {
-
-
-            return View();
+            return View(await _context.Habit.ToListAsync());
         }
 
 
