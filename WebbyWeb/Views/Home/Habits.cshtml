@@ -25,7 +25,7 @@
 </div>
 
 
-<!-- Begin Modal for viewing habit -->
+<!-- Begin Modal for viewing habit
 <div class="modal fade" id="habitModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -38,17 +38,17 @@
             </div>
             <div class="modal-footer">
                 <button id="completeBtn" class="btn btn-success" data-dismiss="modal" value='false'>Completed</button>
-                <div id="idPlaceholder" style="display:none;"></div>    <!-- button id -->
-                <div id="checkPlaceholder" style="display:none;"></div> <!-- habit checked or not   -->
+                <div id="idPlaceholder" style="display:none;"></div>   
+                <div id="checkPlaceholder" style="display:none;"></div> 
             </div>
             
         </div>
     </div>
 </div>
-<!-- end modal -->
+end modal -->
 
 
-<table class="table">
+<table class="table" id='table'>
     <thead>
         <tr>
                 <th>
@@ -113,11 +113,9 @@ FormatPage();
 loadHabitCompletions();
 loadProgressBar(window.habitsPercentComplete);
 
-
-
-
-
-
+$(document).ready(function(){
+    $('#table')[0].style.display='none';
+});
 
 function FormatPage()
 {
@@ -127,12 +125,12 @@ function FormatPage()
     add.className='main-raised';
     add.setAttribute('data-spy','affix');
     add.setAttribute('data-offset-top',"70"); // when progress bar becomes affixed
-    add.style='margin: 20px 210px 0px;height: 40px;border-radius: 30px;background-color: rgb(221, 221, 221);z-index: 4;width: -webkit-fill-available';
+    add.style='margin: 20px 210px 0px;height: 40px;border-radius: 30px;background-color: rgb(250, 250, 250);z-index: 4;width: -webkit-fill-available';
     
     add.id='ProgressBarCard';
     $('.header')[0].style="min-height: 70px";
     $('.header')[0].append(add);
-}
+};
 
 function loadProgressBar(percentComplete)
 {
@@ -150,7 +148,7 @@ function loadProgressBar(percentComplete)
     add.innerText=percentComplete +'%';
 
     $('#ProgressBarCard').append(add);
-}
+};
 
 function loadCalendar(){        
     var start = 1;
@@ -172,13 +170,14 @@ function loadCalendar(){
         };
         if(hour==0){hour=12;}
         //creating times for calendar. Each time gets an ID of their military time.
-        $('.Times').append('<li id='+hourId+'time><div class="Time" >'+ hour +amOrPm+'</div> <div class="col-md-1"></div> </li><br><br><br><br>');//id is military time
+        $('.Times').append('<li id='+hourId+'time><div class="Time" >'+ hour +amOrPm+'</div> <div class="col-md-1"></div> </li><br>');//id is military time
     }
 }; 
 
 function loadEvents (){
     var habitMap;
     var count=1;
+    //cycling through each habit
     while (count >0){
         var entity = $('#'+count)[0];
         count++;
@@ -199,10 +198,11 @@ function loadEvents (){
                 if(timeArray[index]==""){
                     continue;
                 };
-
+                
                 var time =timeArray[index].slice(0,2);
+                //timeDisplay format: hh:mm eg. 09:00
                 var timeDisplay=timeArray[index].slice(0,5);
-
+                
                 if(time[0]==0){
                     time = time[1];
                 };
@@ -236,27 +236,87 @@ function loadEvents (){
                         newButton.setAttribute('data-content',entityDescription);
                         newButton.setAttribute('data-container','body');
                         //style
-                        newButton.style = 'font-size:large;white-space:normal;padding:inherit;height: 70px;width:120px; text-align:center; margin: 0px 10px 0px 10px; text-transform:lowercase; background-color:blue';
+                        newButton.style = 'position:relative;font-size:large;white-space:normal;padding:inherit;height: 70px;width:120px; text-align:center; margin: 0px 10px 0px 10px; text-transform:lowercase;';
+                        newButton.style.backgroundColor='blue';
+                        newButton.style.boxShadow='0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)';
                         
+                        //height according to time
+                        var height = getButtonHeight(timeDisplay);                        
+                        newButton.style.top=height +'px';
+
                         //hidden values
                         newButton.value='false';
                         
                         //inner Text
                         newButton.innerHTML=name;
-                $('#'+time+'time').append(newButton);
+
+                        //add Buttons in Order
+                        var neededSectionHeight=0; //if new button adds height to section, need to adjust section height
+                        var withinArray = $('#'+time+'time').children();
+                        if(withinArray.length>2)//one for time label and one for empty column already there
+                        {
+                            for(let i =withinArray.length-1;i>=2;i--)
+                            {
+                                
+                                var currentButton = withinArray[i];
+                                var currentHeight = currentButton.style.top.slice(0,2);
+
+                                console.log(newButton);
+                                    if(currentHeight[1]=='p'){
+                                        currentHeight=currentHeight[0];
+                                    };
+                                if(height>=currentHeight){
+                                    currentButton.after(newButton);
+                                    neededSectionHeight = height;
+                                    
+                                    break;
+                                };
+                                if(i==2){
+                                    currentButton.before(newButton);
+                                }
+
+                            };
+                        }
+                        else{
+                            $('#'+time+'time').append(newButton);
+                            neededSectionHeight=height;
+                            
+                            };
 
 
-
-                        //$('#'+time).append('<div class="Event"><button data-toggle="popover" data-placement="bottom" title="Test" data-content="Content" data-container="body" value=false id=' + entity.id + 'event' + index +' class="btn btn-default" >'+entity.name+'</button></div>');
+                        //adjust section height
+                        var defaultHeightWithButton=100;
+                        var currentSectionHeight= $('#'+time+'time')[0].style.height.slice(0,3); //will always be 3 digit height
+                        var newSectionHeight = defaultHeightWithButton + neededSectionHeight;
+                        if(currentSectionHeight > newSectionHeight){
+                            $('#'+time+'time')[0].style.height=currentSectionHeight +'px';
+                        }
+                        else{
+                            $('#'+time+'time')[0].style.height=newSectionHeight +'px';
+                        }
                         
-
-                        $('#'+buttonId)[0].addEventListener('click',function(){buttonClick(buttonId)} ); 
-                        // $('#'+entity.id+'event'+index)[0].setAttribute('data-toggle','modal');    //each button can open/close modal
-                        // $('#'+entity.id+'event'+index)[0].setAttribute('data-target','#habitModal');
+                    //when habit clicked
+                    $('#'+buttonId)[0].addEventListener('click',function(){buttonClick(buttonId)} ); 
+                        
                         
                     };
                 };
                 
+};
+
+function getButtonHeight(timeDisplay)
+{
+    //console.log(timeDisplay);
+    var minHeight = 0;
+    var maxHeight = 40;
+
+    var minute = timeDisplay.slice(3,);
+    
+    
+    var ret = Math.round((minute / 60)*40);
+    //console.log(ret);
+    return ret;
+
 };
 
 function loadHabitCompletions()
@@ -286,7 +346,7 @@ function loadHabitCompletions()
                 if(doneOrNot[index]==1) //habit at time is done
                 {
                     $('#'+id)[0].value=true;
-                    $('#'+id)[0].style.backgroundColor='green';
+                    $('#'+id)[0].style.backgroundColor='rgb(0, 200, 105)';
                     habitsComplete+=1;
                     
                 }
@@ -391,7 +451,7 @@ function updateProgressBar()
     var newPercentComplete = Math.round((window.habitsComplete / window.numberOfHabits)*100);
     $('#ProgressBar')[0].style.width=newPercentComplete +'%';
     $('#ProgressBar')[0].innerText=newPercentComplete +'%';
-}
+};
 
 //Habit button click
 function buttonClick(btnId) //when habit button clicked, pulling data from Map (dictionary)
@@ -404,6 +464,7 @@ function buttonClick(btnId) //when habit button clicked, pulling data from Map (
 
         $('#'+btnId)[0].value='false';
         $('#'+btnId)[0].style.backgroundColor='blue';
+        $('#'+btnId)[0].style.opacity='1';
         updateHabit(btnId,0);
         window.habitsComplete -=1;
     };
@@ -411,28 +472,14 @@ function buttonClick(btnId) //when habit button clicked, pulling data from Map (
         //console.log('2');
 
         $('#'+btnId)[0].value='true';
-        $('#'+btnId)[0].style.backgroundColor='green';
+        $('#'+btnId)[0].style.backgroundColor='rgb(0, 200, 105)';
+        $('#'+btnId)[0].style.opacity='.6';
         updateHabit(btnId,1);
         window.habitsComplete +=1;
     };
     updateProgressBar();
 }; 
 
-//Modal button, changes habit color based off of if completed or not
-$('#completeBtn')[0].addEventListener('click',function(){
-    var check = $('#checkPlaceholder')[0].innerHTML;
-    var id = $('#idPlaceholder')[0].innerHTML;
-    //console.log(id);
-    if(check=='false'){ //habit not done, change to done
-        $('#'+id)[0].style.background='green';
-        updateHabit(id,1);
-    };
-    if(check=='true'){ //habit done, change to undone
-        $('#'+id)[0].style.background='blue';
-        updateHabit(id,0);
-    };
-    
-}); 
 
 
 

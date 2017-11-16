@@ -45,7 +45,8 @@ namespace WebbyWeb.Controllers
 
         public async Task<IActionResult> Habits()
         {
-            return View(await _context.Habit.ToListAsync());
+            var ret = await _context.Habit.ToListAsync();
+            return View(ret);
         }
 
 

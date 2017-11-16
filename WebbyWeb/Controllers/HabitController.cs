@@ -133,9 +133,9 @@ namespace WebbyWeb.Controllers
                     _context.Update(habit);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception exc)
                 {
-                    throw;
+                    throw exc;
                 }
                 return RedirectToAction(nameof(Index));
             }
