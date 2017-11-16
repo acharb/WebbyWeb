@@ -4,12 +4,17 @@
     ViewData["Title"] = "Index";
 }
 
+<!-- <div class="progress" style="height:40px;border-radius:15px">
+    <div class="progress-bar" style="text-align:right;background-color:blue;border-radius:15px;width:30%;text-align: center;font-style: inherit;font-size: medium;padding-top: 7px;" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+	<span >30% </span>
+	</div>
+</div> -->
+
 <div id="calendar-container">
     <header>
         <br>
 
-        <h2 style='font-weight:bold; text-align:center'>Today's Habits</h2>
-        <button id="testButton" value='test'>Test</button>
+        <h2 style='font-weight:bold; text-align:center'>daily</h2>
     </header>
 
     <div id="calendar">
@@ -93,15 +98,60 @@
 
 <script>
 
+
 // ---------------------CLUES-----------------------
 //button elements have id: entity # from DB + 'event'+ index of time
 //time elements (list items) have id: hour (military time) + 'time'
 //each button element has a value attribute telling if complete or not (true or false)
 
+
+var numberOfHabits=0;
+var habitsComplete=0;
 loadCalendar();
 loadEvents();
+FormatPage();
+loadHabitCompletions();
+loadProgressBar(window.habitsPercentComplete);
 
-//load calendar display
+
+
+
+
+
+
+function FormatPage()
+{
+    $('#mainCard')[0].style='background:white;margin: 0px 200px 0px;';
+    
+    var add= document.createElement('div');
+    add.className='main-raised';
+    add.setAttribute('data-spy','affix');
+    add.setAttribute('data-offset-top',"70"); // when progress bar becomes affixed
+    add.style='margin: 20px 210px 0px;height: 40px;border-radius: 30px;background-color: rgb(221, 221, 221);z-index: 4;width: -webkit-fill-available';
+    
+    add.id='ProgressBarCard';
+    $('.header')[0].style="min-height: 70px";
+    $('.header')[0].append(add);
+}
+
+function loadProgressBar(percentComplete)
+{
+    var add = document.createElement('div');
+    add.className='progress-bar'
+    add.style='text-align:right;width:100%;background-color:blue;border-radius:30px;text-align: center;font-style: inherit;font-size: medium;padding-top: 7px;';
+    add.id='ProgressBar';
+    
+
+    
+    add.setAttribute('role','progressbar');
+    add.setAttribute('aria-valuenow','60');
+    add.setAttribute('aria-valuemin','0');
+    add.setAttribute('aria-valuemax','100');
+    add.innerText=percentComplete +'%';
+
+    $('#ProgressBarCard').append(add);
+}
+
 function loadCalendar(){        
     var start = 1;
     var end = 24;
@@ -122,11 +172,10 @@ function loadCalendar(){
         };
         if(hour==0){hour=12;}
         //creating times for calendar. Each time gets an ID of their military time.
-        $('.Times').append('<li id='+hourId+'time><div class="Time" >'+ hour +amOrPm+'</div></li><br><br><br><br>');//id is military time
+        $('.Times').append('<li id='+hourId+'time><div class="Time" >'+ hour +amOrPm+'</div> <div class="col-md-1"></div> </li><br><br><br><br>');//id is military time
     }
 }; 
 
-//load events, get wether done or not from DB
 function loadEvents (){
     var habitMap;
     var count=1;
@@ -182,13 +231,12 @@ function loadEvents (){
                         //popup setup
                         newButton.setAttribute('data-toggle','popover');
                         newButton.setAttribute('data-trigger','hover');
+                        newButton.setAttribute('data-placement','bottom');
                         newButton.title=timeDisplay;
                         newButton.setAttribute('data-content',entityDescription);
                         newButton.setAttribute('data-container','body');
                         //style
-                        newButton.style.margin='0px 0px 0px 5px';
-                        newButton.style.textTransform='lowercase';
-                        newButton.style.backgroundColor='blue';
+                        newButton.style = 'font-size:large;white-space:normal;padding:inherit;height: 70px;width:120px; text-align:center; margin: 0px 10px 0px 10px; text-transform:lowercase; background-color:blue';
                         
                         //hidden values
                         newButton.value='false';
@@ -211,85 +259,59 @@ function loadEvents (){
                 
 };
 
-
-/*
-//load events as buttons onto calendar
-function load (){
-    var ready = $.get("/Habit/DetailData", function(data)   
-    { return data;});
-
+function loadHabitCompletions()
+{
+    
     
 
-    return ready.done(function(data){
-
-    
+    var test = getAllHabits();
+    return test.success(function(data)
+    {
+        var numberOfHabits = 0;
+        var habitsComplete = 0;
         for(var count=0;count<data.length;count++)
-                {
-                    var entity = data[count];
-                    var timeArray =entity.time.split(',');
-                    
-                    var details=[entity.name,entity.description];   //details of entity for map
+        {
+            var entity = data[count];
+            var doneOrNot = entity.doneOrNot;
+            var timeArray =entity.time.split(',');
+            
 
-                    //adding each time for each habit
-                    for(let index =0;index<timeArray.length;index++)
-                    {
-                        if(timeArray[index]==""){
-                            continue;
-                        };
-                        var time =timeArray[index].slice(0,2);
-                        var timeDisplay=timeArray[index].slice(0,5);
-                        if(time[0]==0)
-                            {
-                                time = time[1];
-                            };
-
-                        if(timeDisplay[0]==0){
-                            timeDisplay=timeDisplay; //.slice(1,)+'<span>&nbsp</span>'+' - '+' <span> &nbsp </span> ';
-                        }
-                        else{
-                            timeDisplay=timeDisplay;
-                        };
-
-                        habitMap.set(entity.id+'event'+index,details);    //add details to habit map [name,description] for pulling details on modal open
-
-
-                        //adding buttons (events) to times. Buttons get ID of their id from database +'event' + time. Going to div of time ID
-                        
-                        //help for adding on click functions to buttons
-                        //https://stackoverflow.com/questions/9643311/pass-string-parameter-in-an-onclick-function
-
-                        let input = entity.id+'event'+index;
-                        //need to pass parameter into function as string, if do just variable name function will look for variable
-                        
-                        let newButton = document.createElement('BUTTON');
-                        newButton.className = 'btn btn-default';
-                        newButton.id=input;
-                        newButton.setAttribute('data-toggle','popover');
-                        newButton.setAttribute('data-trigger','hover');
-                        newButton.setAttribute('data-content','Content');
-                        newButton.setAttribute('data-container','body');
-                        //newButton.value='false';
-                        //newButton.title="Test";
-                        
-                        $('#'+time).append(newButton);
-
-
-
-                        //$('#'+time).append('<div class="Event"><button data-toggle="popover" data-placement="bottom" title="Test" data-content="Content" data-container="body" value=false id=' + entity.id + 'event' + index +' class="btn btn-default" >'+entity.name+'</button></div>');
-                        
-
-                        //$('#'+entity.id+'event'+time)[0].addEventListener('click',function(){buttonClick(entity.id+'event'+time)} );          onmouseover="popOver(\''+input+'\')"
-                        // $('#'+entity.id+'event'+index)[0].setAttribute('data-toggle','modal');    //each button can open/close modal
-                        // $('#'+entity.id+'event'+index)[0].setAttribute('data-target','#habitModal');
-                        
-                    };
+            for(let index =0;index<timeArray.length;index++)
+            {
+                if(timeArray[index]==""){
+                    continue;
                 };
-                return habitMap;
-    });
-};
-*/
+                var id = entity.id + 'event' + index;
+                numberOfHabits+=1;
+                if(doneOrNot[index]==1) //habit at time is done
+                {
+                    $('#'+id)[0].value=true;
+                    $('#'+id)[0].style.backgroundColor='green';
+                    habitsComplete+=1;
+                    
+                }
+                else //habit at time is not done
+                {
+                    $('#'+id)[0].value=false;
+                    $('#'+id)[0].style.backgroundColor='blue';
 
-//gets habit from controller
+                }
+            
+            }
+        }
+        
+        var habitPercentComplete = Math.round((habitsComplete/numberOfHabits)*100);
+        $('#ProgressBar')[0].style.width=habitPercentComplete +'%';
+        $('#ProgressBar')[0].innerText=habitPercentComplete +'%';
+        window.habitsComplete=habitsComplete;
+        window.numberOfHabits=numberOfHabits;
+        return (habitPercentComplete);
+    });
+    
+    
+};
+
+//gets single habit from controller
 function getHabit(habitId){//returns either the habit or null if not there
     var ret= $.ajax(
             {
@@ -300,13 +322,13 @@ function getHabit(habitId){//returns either the habit or null if not there
                 }
             }
         );
-    return ret.done();
+    return ret.success();
 };
 
 //posts habit to DB
-function postHabit(id,habitContainer){
+function postHabit(id,habitContainer)
+{
     var token = $("[name='__RequestVerificationToken']").val();
-    console.log(habitContainer);
     $.ajax(
             {
                 type:"POST",
@@ -328,7 +350,22 @@ function postHabit(id,habitContainer){
                 
             }
         )
-}
+};
+
+//get all habits from controller
+function getAllHabits()
+{
+    var ret = $.ajax(
+            {
+                type:"GET",
+                url:"/Habit/DetailData",
+                success: function(data){
+                    return data;
+                }
+            }
+        );
+    return ret.success();
+};
 
 //update Habit in DB (uses getHabit and posthabit)
 function updateHabit(habitId,givenDoneOrNot){
@@ -349,6 +386,13 @@ function updateHabit(habitId,givenDoneOrNot){
     })
 };
 
+function updateProgressBar()
+{
+    var newPercentComplete = Math.round((window.habitsComplete / window.numberOfHabits)*100);
+    $('#ProgressBar')[0].style.width=newPercentComplete +'%';
+    $('#ProgressBar')[0].innerText=newPercentComplete +'%';
+}
+
 //Habit button click
 function buttonClick(btnId) //when habit button clicked, pulling data from Map (dictionary)
 {
@@ -361,6 +405,7 @@ function buttonClick(btnId) //when habit button clicked, pulling data from Map (
         $('#'+btnId)[0].value='false';
         $('#'+btnId)[0].style.backgroundColor='blue';
         updateHabit(btnId,0);
+        window.habitsComplete -=1;
     };
     if(check=='false'){   //if habit not done
         //console.log('2');
@@ -368,8 +413,9 @@ function buttonClick(btnId) //when habit button clicked, pulling data from Map (
         $('#'+btnId)[0].value='true';
         $('#'+btnId)[0].style.backgroundColor='green';
         updateHabit(btnId,1);
+        window.habitsComplete +=1;
     };
-    
+    updateProgressBar();
 }; 
 
 //Modal button, changes habit color based off of if completed or not

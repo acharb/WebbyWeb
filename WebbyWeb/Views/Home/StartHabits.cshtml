@@ -1,7 +1,7 @@
 ﻿@model WebbyWeb.Models.Habit
 
 
-<h2 id="title">Add Daily Habits</h2>
+<h2 id="title">add habits</h2>
 
 <h2 id="ShowHabits"></h2>
 
@@ -9,8 +9,8 @@
 	<label class="control-label">Add a habit</label>
 	<input type="text" id="habit" class="form-control " />
 
-    <button id="OpenModalButton" class="btn btn-info btn-round btn-xs"  data-target="#myModal">
-        Create
+    <button id="OpenModalButton" style="text-transform:lowercase" class="btn btn-info btn-round btn-xs"  data-target="#myModal">
+        create
     </button>
 
 </div>
@@ -30,7 +30,7 @@
                 <form id="HabitForm" asp-action="Create">   <!-- Begin Habit form -->
 
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <textarea asp-for="Description" form="HabitForm" id="HabitDescription" class="form-control" placeholder="Description"></textarea>
+                    <textarea asp-for="Description" form="HabitForm" id="HabitDescription" class="form-control" placeholder="description"></textarea>
                     <!-- <span asp-validation-for="Description" class="text-danger"></span> -->
                     <br>
 
@@ -42,7 +42,7 @@
                         <div class="col-sm-4">
                             <br>
                             <button id="AddTimeButton" class="btn btn-primary btn-fab btn-fab-mini btn-round btn-xs" style"width:50%">
-                                <i class="material-icons">done</i>
+                                <i class="material-icons">add</i>
                             </button>
                         </div>
                         <div id="ShowTimes" class="col-sm-3">
@@ -50,7 +50,7 @@
                         </div>
                     </div>
 
-                    <button id="ModalButtonHabitSubmit" type="submit" class="btn btn-info" >Save Habit</button>
+                    <button id="ModalButtonHabitSubmit" style="text-transform:lowercase" type="submit" class="btn btn-info" >save</button>
                 </form> <!-- end habit form -->
             </div>
             <div class="modal-footer">

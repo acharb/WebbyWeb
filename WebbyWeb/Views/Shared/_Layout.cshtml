@@ -82,9 +82,9 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav" >
-                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="StartHabits">Start Habits</a></li>
-                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="Habits">Habits</a></li>
-                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="DailyProgress">Daily Progress</a></li>
+                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="StartHabits">start</a></li>
+                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="Habits">daily</a></li>
+                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="DailyProgress">progress</a></li>
                 <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="OverallProgress">Overall Progress</a></li>
             </ul>
         </div>
@@ -101,7 +101,7 @@
 
 
     <!-- you can use the class main-raised if you want the main area to be as a page with shadows -->
-    <div class="main main-raised" style="background:white; margin: -60px 200px 0px;"> <!-- margin controls card size -->
+    <div class="main main-raised" id='mainCard' style="background:white; margin: -60px 200px 0px;"> <!-- margin controls card size -->
         <div class="container" style="width:inherit">
 
             <!-- here you can add your content -->
@@ -109,9 +109,9 @@
 
 					
             @RenderBody()
-        <hr />
+        
         <footer>
-            <p>&copy; 2017 - WebbyWeb</p>
+           
         </footer>
         </div>
     </div>

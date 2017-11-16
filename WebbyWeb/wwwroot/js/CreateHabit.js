@@ -11,18 +11,47 @@ var timesArray=[];
 //When add time button pushed
 function PostTimes(time) 
 {   
-    if(time!=""){
-        $('#ShowTimes')[0].insertAdjacentHTML('beforeend','<div style="color:green">'+time+'</div>');    //div holds the times to add to DB
+    if(time!="")
+    {
+        var timeDisplay = FormatTime(time);
+        $('#ShowTimes')[0].insertAdjacentHTML('beforeend','<div style="color:green">'+timeDisplay+'</div>');    //div holds the times to add to DB
         timesArray.push(time);
-        }
+    }
 };
+
+//format time to be displayed, given as string
+function FormatTime(time)
+{
+    var timeFirstTwo = time.slice(0,2);
+    if(timeFirstTwo <=11)
+    {
+        var timeDisplay = time +' am';
+        if(timeDisplay[0] == 0){
+            timeDisplay = timeDisplay.slice(1,);
+        }
+    }
+    if(timeFirstTwo >12)
+    {
+        var timeDisplay = (timeFirstTwo-12) +time.slice(2,) + ' pm';
+    }
+    if(timeFirstTwo==12)
+    {
+        var timeDisplay = time+' pm';
+    }
+    if(timeFirstTwo==00){
+        var timeDisplay = '12' +time.slice(2,) +'am';
+    }
+
+    return timeDisplay;
+}
+
 
 //Open Modal on create habit button
 $('#OpenModalButton').click(function(event){ 
         event.preventDefault();
         if($('#habit').val() != ""){
             $('#OpenModalButton')[0].setAttribute('data-toggle','modal');   //set data toggle
-            $('#HabitChange')[0].innerHTML="Describe:   " + $('#habit').val();
+            $('#HabitChange')[0].innerHTML="describe";
         }
         else{
             alert('Habit must have name');
