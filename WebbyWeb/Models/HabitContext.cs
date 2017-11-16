@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore;
 using WebbyWeb.Models;
 
@@ -11,5 +11,6 @@ namespace WebbyWeb.Models
             
         }
         public DbSet<WebbyWeb.Models.Habit> Habit { get; set; }
+        public DbSet<WebbyWeb.Models.Profile> Profile { get; set; }
     }
 }

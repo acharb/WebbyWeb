@@ -1,4 +1,5 @@
-﻿@{
+﻿@model WebbyWeb.Models.Profile
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -9,67 +10,105 @@
     <!-- <img src="/images/pyramid_BandW.jpg" style="width:750px;"> -->
 </div>
 
-<div class="card card-signup">
-	<form class="form" method="" action="">
-	    <div class="header header-primary text-center" style="background:linear-gradient(60deg, #e2a7ec, #337ab7)">
-			
-            <img src="/images/pyramid.png" style="width:60px; filter:invert(100%)">
 
-				<!-- <div class="social-line">
-					<a href="#pablo" class="btn btn-simple btn-just-icon">
-						<i class="fa fa-facebook-square"></i>
-					</a> 
-					<a href="#pablo" class="btn btn-simple btn-just-icon">
-						<i class="fa fa-twitter"></i>
-					</a>
-					<a href="#pablo" class="btn btn-simple btn-just-icon">
-						<i class="fa fa-google-plus"></i>
-					</a>
-				</div> -->
+<div class="card card-signup" id="signUpCard">
+    <div class="header header-primary text-center" style="background:linear-gradient(60deg, #e2a7ec, #337ab7)">
+            <img src="/images/pyramid.png" style="width:60px; filter:invert(100%)">
 		</div>
-            
-			<p class="text-divider">login</p>
+    <!-- Begin Login Form -->
+	<form class="form" id="LoginForm" style="display:none" method="" action="">
+        <!-- <p class="text-divider" >login</p> -->
 			<div class="content">
                 <div class="input-group">
                     <span class="input-group-addon">
                         <i class="material-icons">face</i>
                     </span>
-                    <input type="text" class="form-control" placeholder="First Name...">
+                    <input type="text" class="form-control" placeholder="username...">
                 </div>
 
                 <div class="input-group">
                     <span class="input-group-addon">
                         <i class="material-icons">email</i>
                     </span>
-                    <input type="text" class="form-control" placeholder="Email...">
+                    <input type="text" class="form-control" placeholder="email...">
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon">
                         <i class="material-icons">lock_outline</i>
                     </span>
-                    <input type="password" placeholder="Password..." class="form-control" />
+                    <input type="password" placeholder="password..." class="form-control" />
                 </div>
-
-									<!-- If you want to add a checkbox to this form, uncomment this code
-
-									<div class="checkbox">
-										<label>
-											<input type="checkbox" name="optionsCheckboxes" checked>
-											Subscribe to newsletter
-										</label>
-									</div> -->
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="optionsCheckboxes" >
+                        remember me
+                    </label>
+                </div>
             </div>
-            <div class="footer text-center">
-                <!-- <a href="#pablo" class="btn btn-simple btn-primary btn-lg">Get Started</a> -->
+            <div class="form-group text-center">
+                <input type="submit" value="login" style='text-transform:lowercase' class="btn btn-primary btn-md" />
             </div>
-    </form>
+        </form>
+        <!-- End Login Form -->
+        <!-- Begin Register Form -->
+        <form class="form" id="RegisterForm" style="display:none" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <!-- <p class="text-divider">register</p> -->
+			<div class="content">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="material-icons">face</i></span>
+                    <input asp-for="UserName" type="text" class="form-control" placeholder="username" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="material-icons">lock_outline</i></span>
+                    <input asp-for="Password" type="password" placeholder="password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="material-icons">lock_outline</i></span>
+                    <input asp-for="ConfirmPassword" type="password" placeholder="confirm password" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group text-center">
+                <input type="submit" value="register" style='text-transform:lowercase' class="btn btn-primary btn-md" />
+            </div>
+        </form>
+        <!-- End Register Form -->
+        <div class="footer text-center">
+            <a href="#pablo" id="LoginBtn" style="text-transform:lowercase" class="btn btn-simple btn-primary btn-lg">login</a>
+            <button id= "RegisterBtn" style='text-transform:lowercase' class="btn btn-simple btn-primary btn-lg">register</button>
+        </div>
 </div> 
 
 
 <br>
 
 <script>
-    $('#mainCard')[0].className='main';
-    $('#mainCard')[0].style.marginTop='60px';
-    $('#mainCard')[0].style.width='60%';
+    FormatPage();
+
+    $('#RegisterBtn').click(function(event){
+        event.preventDefault();
+        $('#LoginForm')[0].style.display='none';
+        $('#RegisterForm')[0].style.display='block';
+    });
+    $('#LoginBtn').click(function(event){
+        event.preventDefault();
+        $('#RegisterForm')[0].style.display='none';
+        $('#LoginForm')[0].style.display='block';
+    });
+
+
+    function FormatPage(){
+        $('#mainCard')[0].className='main';
+        $('#mainCard')[0].style.margin='auto';
+        $('#mainCard')[0].style.marginTop='40px';
+        $('#mainCard')[0].style.width='50%';
+
+    };
+
+    
+
+    
 </script>
