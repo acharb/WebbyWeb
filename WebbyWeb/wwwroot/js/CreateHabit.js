@@ -7,6 +7,7 @@ $('#AddTimeButton')[0].addEventListener('click',function(event){
     PostTimes($('#InputTime')[0].value);
 
 });
+
 var timesArray=[];
 //When add time button pushed
 function PostTimes(time) 
@@ -73,6 +74,7 @@ $('#ModalButtonHabitSubmit').click(function(){ //activate form submit
         }
 });
    
+
 
 //on habit form submit (once abive is clicked)
 $('#HabitForm').on("submit",function(event){    

@@ -62,6 +62,9 @@ namespace WebbyWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,Time,Description,DoneOrNot")] Habit habit)
         {
+            //need profile ID
+            int profileId = Session["Username"];
+
             if (ModelState.IsValid)
             {
                 _context.Add(habit);
@@ -94,6 +97,7 @@ namespace WebbyWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Time,Description,DoneOrNot")] Habit habit)
         {
+            //need profile ID
             if (id != habit.ID)
             {
                 return NotFound();

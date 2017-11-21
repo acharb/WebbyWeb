@@ -66,7 +66,7 @@ namespace WebbyWeb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,UserName,Password,ConfirmPassword")] Profile profile)
+        public async Task<IActionResult> Create([Bind("ID,UserName,Password")] Profile profile)
         {
             if (ModelState.IsValid)
             {
@@ -99,7 +99,7 @@ namespace WebbyWeb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,UserName,Password,ConfirmPassword")] Profile profile)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,UserName,Password")] Profile profile)
         {
             if (id != profile.ID)
             {
