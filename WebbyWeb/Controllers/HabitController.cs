@@ -63,22 +63,29 @@ namespace WebbyWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,Time,Description,DoneOrNot")] Habit habit)
         {
-            //need profile ID
-            int profileId = (int) HttpContext.Session.GetInt32("ProfileId");
-            if(profileId >0){
-                habit.ID = profileId;
-            }
-            else{
-                return View("NotLoggedIn");
-            }
-            
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(habit);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //need profile ID
+                int profileId = (int) HttpContext.Session.GetInt32("ProfileId");
+                if(profileId >0){
+                    habit.ID = profileId;
+                }
+                else{
+                    return View("NotLoggedIn");
+                }
+                
+                if (ModelState.IsValid)
+                {
+                    _context.Add(habit);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(habit);
             }
-            return View(habit);
+            catch(Exception exc)
+            {
+                throw exc;
+            }
         }
 
         // GET: Habit/Edit/5

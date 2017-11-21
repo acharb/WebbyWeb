@@ -21,6 +21,10 @@ namespace WebbyWeb.Controllers
 
         public async Task<IActionResult> Login(string username)
         {
+            
+
+
+
             var profile = await _context.Profile.Where(x=>x.UserName==username).FirstOrDefaultAsync();
 
             if(username==profile.UserName)

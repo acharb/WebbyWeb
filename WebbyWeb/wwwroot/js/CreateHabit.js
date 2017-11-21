@@ -76,7 +76,7 @@ $('#ModalButtonHabitSubmit').click(function(){ //activate form submit
    
 
 
-//on habit form submit (once abive is clicked)
+//on habit form submit (once above is clicked)
 $('#HabitForm').on("submit",function(event){    
         event.preventDefault();
         var token = $("[name='__RequestVerificationToken']").val();

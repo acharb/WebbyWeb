@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using WebbyWeb.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,8 +26,12 @@ namespace WebbyWeb.Controllers
 
         public IActionResult StartHabits()
         {
-
-            return View();
+            if (HttpContext.Session.GetString("UserName") !=null){
+                return View();
+            }
+            else{
+                return View("NotLoggedIn");
+            }
         }
 
         public IActionResult SaveHabit(Models.Habit Habit)
@@ -45,14 +50,20 @@ namespace WebbyWeb.Controllers
 
         public async Task<IActionResult> Habits(int id)
         {
-            var ret = await _context.Habit.Where(x=> x.ProfileId==id) .ToListAsync();
-            return View(ret);
+            if (HttpContext.Session.GetString("UserName")!=null ){
+                var ret = await _context.Habit.Where(x=> x.ProfileId==id) .ToListAsync();
+                return View(ret);
+            }
+            else{
+                return View("NotLoggedIn");
+            }
+            
         }
 
 
         public IActionResult Progress()
         {
-            if (User.Identity.IsAuthenticated){
+            if (HttpContext.Session.GetString("UserName")!=null){
                 return View();
             }
             else{
@@ -64,7 +75,13 @@ namespace WebbyWeb.Controllers
         public IActionResult OverallProgress()
         {
 
-            return View();
+            if (HttpContext.Session.GetString("UserName")!=null){
+                
+                return View();
+            }
+            else{
+                return View("NotLoggedIn");
+            }
         }
 
         public IActionResult Error()

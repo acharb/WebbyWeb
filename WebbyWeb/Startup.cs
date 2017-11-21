@@ -26,12 +26,20 @@ namespace WebbyWeb
             services.AddDbContext<HabitContext>(options =>
                                                 options.UseSqlite("Data Source = Habit.db"));  //connecting
 
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+            
             services.AddMvc();
 
             // Adds a default in-memory implementation of IDistributedCache.
             services.AddDistributedMemoryCache();
 
-            services.AddSession();
+            services.AddSession(options =>
+                {
+
+                    options.Cookie.HttpOnly = true;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
