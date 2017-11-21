@@ -10,8 +10,8 @@ using WebbyWeb.Models;
 namespace WebbyWeb.Migrations
 {
     [DbContext(typeof(HabitContext))]
-    [Migration("20171109212644_createDB")]
-    partial class createDB
+    [Migration("20171121190722_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,12 +32,40 @@ namespace WebbyWeb.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
+                    b.Property<int>("ProfileId");
+
                     b.Property<string>("Time")
                         .IsRequired();
 
                     b.HasKey("ID");
 
+                    b.HasIndex("ProfileId");
+
                     b.ToTable("Habit");
+                });
+
+            modelBuilder.Entity("WebbyWeb.Models.Profile", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Password")
+                        .IsRequired();
+
+                    b.Property<string>("UserName")
+                        .IsRequired();
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Profile");
+                });
+
+            modelBuilder.Entity("WebbyWeb.Models.Habit", b =>
+                {
+                    b.HasOne("WebbyWeb.Models.Profile", "Profile")
+                        .WithMany("Habits")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

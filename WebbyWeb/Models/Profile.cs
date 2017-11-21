@@ -5,15 +5,15 @@ using Newtonsoft.Json;
 
 namespace WebbyWeb.Models
 {
-    public class Profile
+    public class Profile    //principal entity to the dependent entity Habit
     {
         public int ID { get; set; }
         [Required(ErrorMessage="required.")]
         public string UserName { get; set; }
         [Required(ErrorMessage="required.")]
         public string Password { get; set; } //string of times, seperated by commas
-        [Required(ErrorMessage="required.")]
-        public string ConfirmPassword { get; set; }
+
+        public List<Habit> Habits {get;set;}
         
         
 

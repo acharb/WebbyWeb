@@ -45,7 +45,7 @@ namespace WebbyWeb.Controllers
 
         public async Task<IActionResult> Habits(int id)
         {
-            var ret = await _context.Habit.Where(x=> x.ProfileID==id) .ToListAsync();
+            var ret = await _context.Habit.Where(x=> x.ProfileId==id) .ToListAsync();
             return View(ret);
         }
 
