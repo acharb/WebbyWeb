@@ -1,10 +1,11 @@
 using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebbyWeb.Models;
 
 namespace WebbyWeb.Models
 {
-    public class HabitContext : DbContext
+    public class HabitContext : IdentityDbContext<ApplicationUser> //Uses identity db context for identity authentication use
     {
         public HabitContext (DbContextOptions<HabitContext> options) : base(options) 
         {

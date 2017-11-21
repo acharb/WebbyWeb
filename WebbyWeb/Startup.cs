@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,15 +21,15 @@ namespace WebbyWeb
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // This method gets called by the runtime. Use this method to add services to the application.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<HabitContext>(options =>
                                                 options.UseSqlite("Data Source = Habit.db"));  //connecting
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<HabitContext>()   //links user to DB
+                .AddDefaultTokenProviders();    //default tokens allow temp access, useful for password reset, change password
             
             services.AddMvc();
 
@@ -55,6 +56,7 @@ namespace WebbyWeb
             }
 
             app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseSession();
             app.UseMvc(routes =>
             {
