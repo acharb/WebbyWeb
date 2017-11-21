@@ -1,0 +1,88 @@
+﻿<div class="PieContainer">
+  <canvas id="pieChart"></canvas>
+</div>
+
+
+<div id="piechart" style="width: 900px; height: 500px;"></div>
+
+<script>
+  FormatPage();
+  CreatePieChart();
+
+  function CreatePieChartFromArray(completeArray){
+
+    var todaysDone = completeArray[0];
+    var todaysLeft = completeArray[1]-todaysDone;
+    var totalLeft = completeArray[1]*7 - todaysDone;
+
+    var ctxP = document.getElementById("pieChart").getContext('2d');
+    var myPieChart = new Chart(ctxP, {
+        type: 'pie',
+        data: {
+            labels: ["today's complete", "today's left", "total left"],
+            datasets: [
+                {
+                    data: [todaysDone, todaysLeft, totalLeft],
+                    backgroundColor: ["green", "blue", "darkblue"],
+                    hoverBackgroundColor: ["lightgreen", "yellow", "darkblue"]
+                }
+            ]
+        },
+        options: {
+            responsive: true
+        }    
+    });
+  };
+  
+  //get all habits from controller
+  function CreatePieChart(){
+      var ret = $.ajax(
+              {
+                  type:"GET",
+                  url:"/Habit/DetailData",
+                  success: function(data){
+                      var completeArray = calculateHabitsComplete(data);
+                      CreatePieChartFromArray(completeArray);
+                  }
+              }
+          );
+      return ret.success();
+  };
+
+
+
+  //return array [habits complete (by time), total habits (by times)]
+  function calculateHabitsComplete(data){
+
+      var numberOfHabits = 0;
+      var habitsComplete = 0;
+      //cycle through each habit
+      for(var entityIndex=0;entityIndex<data.length;entityIndex++)
+        {
+          var entity = data[entityIndex];
+          var doneOrNot = entity.doneOrNot;
+          //cycle through each habit done or not
+          for(var doneOrNotIndex = 0; doneOrNotIndex<doneOrNot.length;doneOrNotIndex++)
+          {
+            numberOfHabits+=1;
+            if(doneOrNot[doneOrNotIndex]==1)
+            {
+              habitsComplete+=1;
+            };
+          };
+        };
+      var completeArray = [habitsComplete,numberOfHabits];
+      return completeArray;
+  };
+
+
+  function FormatPage(){
+    $('#mainCard')[0].className='main';
+    $('#mainCard')[0].style.width='500px';
+    $('#mainCard')[0].style.margin='auto';
+    $('#mainCard')[0].style.marginTop='-20px';
+  };
+
+</script>
+
+

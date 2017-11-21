@@ -18,6 +18,19 @@ namespace WebbyWeb.Controllers
             _context = context;
         }
 
+        public async Task<IActionResult> Login(string username)
+        {
+            var profile = await _context.Profile.Where(x=>x.UserName==username).FirstOrDefaultAsync();
+
+            if(username==profile.UserName)
+            {
+                return RedirectToAction("Habits","Home");
+            }
+            else{
+                return RedirectToAction("ProfileNotFound","Home");
+            }
+        }
+
         // GET: Profile
         public async Task<IActionResult> Index()
         {
@@ -59,7 +72,8 @@ namespace WebbyWeb.Controllers
             {
                 _context.Add(profile);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var id = profile.ID;
+                return RedirectToAction("Habits","Home",id);
             }
             return View(profile);
         }

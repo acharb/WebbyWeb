@@ -43,14 +43,14 @@ namespace WebbyWeb.Controllers
             return RedirectToAction("StartHabits");
         }
 
-        public async Task<IActionResult> Habits()
+        public async Task<IActionResult> Habits(int id)
         {
-            var ret = await _context.Habit.ToListAsync();
+            var ret = await _context.Habit.Where(x=> x.ProfileID==id) .ToListAsync();
             return View(ret);
         }
 
 
-        public IActionResult DailyProgress()
+        public IActionResult Progress()
         {
             
 

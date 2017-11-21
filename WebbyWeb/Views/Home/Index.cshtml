@@ -16,27 +16,23 @@
             <img src="/images/pyramid.png" style="width:60px; filter:invert(100%)">
 		</div>
     <!-- Begin Login Form -->
-	<form class="form" id="LoginForm" style="display:none" method="" action="">
+	<form class="form" id="LoginForm" style="display:none" asp-controller="Profile" asp-action="Login">
         <!-- <p class="text-divider" >login</p> -->
 			<div class="content">
                 <div class="input-group">
                     <span class="input-group-addon">
                         <i class="material-icons">face</i>
                     </span>
-                    <input type="text" class="form-control" placeholder="username...">
+                    <input asp-for="UserName" type="text" class="form-control" placeholder="username..." />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
 
                 <div class="input-group">
                     <span class="input-group-addon">
-                        <i class="material-icons">email</i>
-                    </span>
-                    <input type="text" class="form-control" placeholder="email...">
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon">
                         <i class="material-icons">lock_outline</i>
                     </span>
-                    <input type="password" placeholder="password..." class="form-control" />
+                    <input asp-for="Password" type="password" placeholder="password..." class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
                 <div class="checkbox">
                     <label>
@@ -51,7 +47,7 @@
         </form>
         <!-- End Login Form -->
         <!-- Begin Register Form -->
-        <form class="form" id="RegisterForm" style="display:none" asp-action="Create">
+        <form class="form" id="RegisterForm" style="display:none" asp-controller="Profile" asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <!-- <p class="text-divider">register</p> -->
 			<div class="content">
@@ -88,24 +84,22 @@
 <script>
     FormatPage();
 
-    $('#RegisterBtn').click(function(event){
-        event.preventDefault();
-        $('#LoginForm')[0].style.display='none';
-        $('#RegisterForm')[0].style.display='block';
-    });
-    $('#LoginBtn').click(function(event){
-        event.preventDefault();
-        $('#RegisterForm')[0].style.display='none';
-        $('#LoginForm')[0].style.display='block';
-    });
-
-
     function FormatPage(){
         $('#mainCard')[0].className='main';
         $('#mainCard')[0].style.margin='auto';
         $('#mainCard')[0].style.marginTop='40px';
         $('#mainCard')[0].style.width='50%';
 
+        $('#RegisterBtn').click(function(event){
+            event.preventDefault();
+            $('#LoginForm')[0].style.display='none';
+            $('#RegisterForm')[0].style.display='block';
+        });
+        $('#LoginBtn').click(function(event){
+            event.preventDefault();
+            $('#RegisterForm')[0].style.display='none';
+            $('#LoginForm')[0].style.display='block';
+        });
     };
 
     
