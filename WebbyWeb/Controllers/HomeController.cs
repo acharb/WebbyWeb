@@ -52,14 +52,17 @@ namespace WebbyWeb.Controllers
 
         public IActionResult Progress()
         {
+            if (User.Identity.IsAuthenticated){
+                return View();
+            }
+            else{
+                return View("NotLoggedIn");
+            }
             
-
-            return View();
         }
 
         public IActionResult OverallProgress()
         {
-
 
             return View();
         }

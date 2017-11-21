@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebbyWeb.Models;
@@ -63,8 +64,14 @@ namespace WebbyWeb.Controllers
         public async Task<IActionResult> Create([Bind("ID,Name,Time,Description,DoneOrNot")] Habit habit)
         {
             //need profile ID
-            int profileId = Session["Username"];
-
+            int profileId = (int) HttpContext.Session.GetInt32("ProfileId");
+            if(profileId >0){
+                habit.ID = profileId;
+            }
+            else{
+                return View("NotLoggedIn");
+            }
+            
             if (ModelState.IsValid)
             {
                 _context.Add(habit);

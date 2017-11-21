@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebbyWeb.Models;
@@ -24,6 +25,11 @@ namespace WebbyWeb.Controllers
 
             if(username==profile.UserName)
             {
+                //creating session for w/ username and profile Id
+                HttpContext.Session.SetString("Username",profile.UserName);
+                HttpContext.Session.SetInt32("ProfileId",profile.ID);
+
+
                 return RedirectToAction("Habits","Home");
             }
             else{
