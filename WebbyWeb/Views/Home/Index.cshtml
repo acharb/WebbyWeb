@@ -16,7 +16,8 @@
             <img src="/images/pyramid.png" style="width:60px; filter:invert(100%)">
 		</div>
     <!-- Begin Login Form -->
-	<form class="form" id="LoginForm" style="display:none" asp-controller="Profile" asp-action="Login">
+	<form class="form" method="post" id="LoginForm" style="display:none" asp-controller="Profile" asp-action="Login">
+		<div asp-validation-summary="All"></div>
         <!-- <p class="text-divider" >login</p> -->
 			<div class="content">
                 <div class="input-group">
@@ -36,7 +37,7 @@
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" name="optionsCheckboxes" >
+                        <input name="RememberMe" type="checkbox">
                         remember me
                     </label>
                 </div>
@@ -47,7 +48,7 @@
         </form>
         <!-- End Login Form -->
         <!-- Begin Register Form -->
-        <form class="form" id="RegisterForm" style="display:none" asp-controller="Profile" asp-action="Register">
+        <form class="form" method="post" id="RegisterForm" style="display:none" asp-controller="Profile" asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <!-- <p class="text-divider">register</p> -->
 			<div class="content">

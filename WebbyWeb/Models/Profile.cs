@@ -10,10 +10,12 @@ namespace WebbyWeb.Models
         public int ID { get; set; }
         [Required(ErrorMessage="required.")]
         public string UserName { get; set; }
-        [Required(ErrorMessage="required.")]
+        [Required(ErrorMessage="required."),DataType(DataType.Password)]
         public string Password { get; set; } //string of times, seperated by commas
 
         public List<Habit> Habits {get;set;}
+
+        public bool RememberMe { get; set; }
         
         
 

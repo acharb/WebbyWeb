@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebbyWeb.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace WebbyWeb.Controllers
 {
@@ -25,23 +26,44 @@ namespace WebbyWeb.Controllers
 
         }
 
-        public async Task<IActionResult> Login(string username)
+        [HttpPost]
+        public async Task<IActionResult> Login([Bind("UserName,Password,RememberMe")] Profile profile) //binding to Profile class
         {
             
-            var profile = await _context.Profile.Where(x=>x.UserName==username).FirstOrDefaultAsync();
-
-            if(username==profile.UserName)
+            if(Request.Form["RememberMe"].ToString()=="on")
             {
-                //creating session for w/ username and profile Id
-                HttpContext.Session.SetString("Username",profile.UserName);
-                HttpContext.Session.SetInt32("ProfileId",profile.ID);
+                profile.RememberMe = true;
+            }
+
+            if (ModelState.IsValid)
+            {
+                //saves login info as cookie if .RememberMe is true, else false. Last parameter doesn't lock user out if login fail
+
+                var result = await _signInManager.PasswordSignInAsync(profile.UserName, profile.Password, profile.RememberMe, false);
+
+                if(result.Succeeded)
+                {
+                    return RedirectToAction("Habits", "Home");
+                }
+                ModelState.AddModelError("","Invalid Login Attempt");
+                return RedirectToAction("Index", "Home");
+
+            }
+            return RedirectToAction("Index", "Home", profile);
+
+           
+            //if(username==profile.UserName)
+            //{
+            //    //creating session for w/ username and profile Id
+            //    HttpContext.Session.SetString("Username",profile.UserName);
+            //    HttpContext.Session.SetInt32("ProfileId",profile.ID);
 
 
-                return RedirectToAction("Habits","Home");
-            }
-            else{
-                return RedirectToAction("ProfileNotFound","Home");
-            }
+            //    return RedirectToAction("Habits","Home");
+            //}
+            //else{
+            //    return RedirectToAction("ProfileNotFound","Home");
+            //}
         }
 
         // GET: Profile
@@ -50,7 +72,7 @@ namespace WebbyWeb.Controllers
             return View(await _context.Profile.ToListAsync());
         }
 
-        [HttpPost]
+        [HttpPost]  //post method to DB to save user
         public async Task<IActionResult> Register(RegistrationViewModel profile)
         {
             if (ModelState.IsValid)
@@ -61,12 +83,12 @@ namespace WebbyWeb.Controllers
 
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, false); //not persistent, logs out if page left
-                    return RedirectToAction("Index");
+                    await _signInManager.SignInAsync(user, false); //signs in if registrationw orks, not persistent, logs out if page left
+                    return RedirectToAction("Index","Home");
                 }
                 else
                 {
-                    foreach (var error in result.Errors)
+                    foreach (var error in result.Errors) //adding errors descriptions to model state
                     {
                         ModelState.AddModelError("", error.Description);
                     }
