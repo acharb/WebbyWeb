@@ -42,7 +42,7 @@ namespace WebbyWeb.Controllers
 
             return RedirectToAction("StartHabits");
         }
-
+        [Authorize]
         public async Task<IActionResult> Habits(int id)
         {
             

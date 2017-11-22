@@ -31,9 +31,7 @@ namespace WebbyWeb.Controllers
         {
             bool rememberMe=false;
             if(Request.Form["RememberMe"].ToString()=="on")
-            {
                 rememberMe = true;
-            }
 
             if (ModelState.IsValid)
             {
@@ -42,9 +40,8 @@ namespace WebbyWeb.Controllers
                 var result = await _signInManager.PasswordSignInAsync(profile.UserName, profile.Password, rememberMe, false);
 
                 if(result.Succeeded)
-                {
                     return RedirectToAction("Habits", "Home");
-                }
+                
                 ModelState.AddModelError("","Invalid Login Attempt");
                 return RedirectToAction("Index", "Home");
 
