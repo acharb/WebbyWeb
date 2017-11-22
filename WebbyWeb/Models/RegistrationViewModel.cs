@@ -12,7 +12,7 @@ namespace WebbyWeb.Models
 
         [Required, MinLength(6), MaxLength(30), DataType(DataType.Password), Display(Name = "confirm password")]
         [Compare("Password", ErrorMessage = "confirm password should match password")]
-        public string ConfirmPasswrod { get; set; }
+        public string ConfirmPassword { get; set; }
 
     }
 }

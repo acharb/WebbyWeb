@@ -73,7 +73,7 @@ namespace WebbyWeb.Controllers
 
                 }
             }
-            return View(profile);
+            return RedirectToAction("Index","Home",profile);
             
         }
 
