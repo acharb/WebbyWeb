@@ -27,19 +27,19 @@ namespace WebbyWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([Bind("UserName,Password,RememberMe")] Profile profile) //binding to Profile class
+        public async Task<IActionResult> Login([Bind("UserName,Password")] Profile profile) //binding to Profile class
         {
-            
+            bool rememberMe=false;
             if(Request.Form["RememberMe"].ToString()=="on")
             {
-                profile.RememberMe = true;
+                rememberMe = true;
             }
 
             if (ModelState.IsValid)
             {
                 //saves login info as cookie if .RememberMe is true, else false. Last parameter doesn't lock user out if login fail
 
-                var result = await _signInManager.PasswordSignInAsync(profile.UserName, profile.Password, profile.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(profile.UserName, profile.Password, rememberMe, false);
 
                 if(result.Succeeded)
                 {

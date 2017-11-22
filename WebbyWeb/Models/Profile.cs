@@ -15,7 +15,6 @@ namespace WebbyWeb.Models
 
         public List<Habit> Habits {get;set;}
 
-        public bool RememberMe { get; set; }
         
         
 
