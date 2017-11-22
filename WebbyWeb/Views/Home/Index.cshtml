@@ -1,4 +1,4 @@
-﻿@model WebbyWeb.Models.Profile
+﻿@model WebbyWeb.Models.RegistrationViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -47,7 +47,7 @@
         </form>
         <!-- End Login Form -->
         <!-- Begin Register Form -->
-        <form class="form" id="RegisterForm" style="display:none" asp-controller="Profile" asp-action="Create">
+        <form class="form" id="RegisterForm" style="display:none" asp-controller="Profile" asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <!-- <p class="text-divider">register</p> -->
 			<div class="content">
@@ -64,6 +64,7 @@
                 <div class="input-group">
                     <span class="input-group-addon"><i class="material-icons">lock_outline</i></span>
                     <input type="password" placeholder="confirm password" class="form-control" />
+				    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group text-center">

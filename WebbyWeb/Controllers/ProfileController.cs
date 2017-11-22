@@ -7,24 +7,27 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebbyWeb.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebbyWeb.Controllers
 {
     public class ProfileController : Controller
     {
         private readonly HabitContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public ProfileController(HabitContext context)
+        public ProfileController(HabitContext context, UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager)
         {
             _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
+
         }
 
         public async Task<IActionResult> Login(string username)
         {
             
-
-
-
             var profile = await _context.Profile.Where(x=>x.UserName==username).FirstOrDefaultAsync();
 
             if(username==profile.UserName)
@@ -45,6 +48,33 @@ namespace WebbyWeb.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Profile.ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegistrationViewModel profile)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var user = new ApplicationUser { UserName = profile.UserName, };
+                var result = await _userManager.CreateAsync(user, profile.Password);
+
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, false); //not persistent, logs out if page left
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+
+                }
+            }
+            return View(profile);
+            
         }
 
         // GET: Profile/Details/5

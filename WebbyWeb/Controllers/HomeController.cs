@@ -26,12 +26,7 @@ namespace WebbyWeb.Controllers
 
         public IActionResult StartHabits()
         {
-            if (HttpContext.Session.GetString("UserName") !=null){
-                return View();
-            }
-            else{
-                return View("NotLoggedIn");
-            }
+            return View();
         }
 
         public IActionResult SaveHabit(Models.Habit Habit)
@@ -50,38 +45,24 @@ namespace WebbyWeb.Controllers
 
         public async Task<IActionResult> Habits(int id)
         {
-            if (HttpContext.Session.GetString("UserName")!=null ){
-                var ret = await _context.Habit.Where(x=> x.ProfileId==id) .ToListAsync();
-                return View(ret);
-            }
-            else{
-                return View("NotLoggedIn");
-            }
+            
+            var ret = await _context.Habit.Where(x=> x.ProfileId==id) .ToListAsync();
+            return View(ret);
+            
             
         }
 
 
         public IActionResult Progress()
         {
-            if (HttpContext.Session.GetString("UserName")!=null){
-                return View();
-            }
-            else{
-                return View("NotLoggedIn");
-            }
+            return View();
             
         }
 
         public IActionResult OverallProgress()
         {
 
-            if (HttpContext.Session.GetString("UserName")!=null){
-                
-                return View();
-            }
-            else{
-                return View("NotLoggedIn");
-            }
+            return View();
         }
 
         public IActionResult Error()
