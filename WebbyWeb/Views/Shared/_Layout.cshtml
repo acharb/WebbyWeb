@@ -64,30 +64,41 @@
 
 <!-- ***using creative Time bootstrap framework:
  https://www.creative-tim.com/product/material-kit?ref=presentation-page -->
-
-
-
 </head>
 <body>
-		
+
+@{ var name=User.Identity.Name;}	
 <!-- NavBar Start-->		
 <nav class="navbar navbar-default" role="navigation" style="text-transform:lowercase; color:gray; background-color:white">  
     <div class="container-fluid">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <!-- <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar">head</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+            </button>  -->
+            <a class="navbar-brand" asp-controller="Home" asp-action="Habits">Home</a>
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav" >
-                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="StartHabits">start</a></li>
-                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="Habits">daily</a></li>
-                <li><a style="text-transform:lowercase;" asp-area="" asp-controller="Home" asp-action="Progress">progress</a></li>
+                <li><a style="text-transform:lowercase;" asp-controller="Home" asp-action="StartHabits">start</a></li>
+                <!-- <li><a style="text-transform:lowercase;" asp-controller="Home" asp-action="Habits">daily</a></li> -->
+                <li><a style="text-transform:lowercase;" asp-controller="Home" asp-action="Progress">progress</a></li>
+            </ul>
+            <!-- dropdown for user icon -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="dopdown" data-toggle="dropdown" style="text-transform:lowercase;color:purple;font-size:16px" asp-controller="Home" asp-action="StartHabits">
+                        <i class="material-icons">face</i> <span id="profileName">@name</span>
+                       <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a asp-controller="Home" asp-action="Logout">logout</a></li>
+                    </ul>
+                    
+                </li>
             </ul>
         </div>
     </div>
@@ -107,9 +118,6 @@
         <div class="container" style="width:inherit">
 
             <!-- here you can add your content -->
-            
-
-					
             @RenderBody()
         
         <footer>
@@ -119,8 +127,11 @@
     </div>
 </div>
 
+<!-- testing if this gets added -->
+
 </body>
 
 </html>
 
-<!-- testing if this gets added -->
+
+

@@ -48,19 +48,6 @@ namespace WebbyWeb.Controllers
             }
             return RedirectToAction("Index", "Home", profile);
 
-           
-            //if(username==profile.UserName)
-            //{
-            //    //creating session for w/ username and profile Id
-            //    HttpContext.Session.SetString("Username",profile.UserName);
-            //    HttpContext.Session.SetInt32("ProfileId",profile.ID);
-
-
-            //    return RedirectToAction("Habits","Home");
-            //}
-            //else{
-            //    return RedirectToAction("ProfileNotFound","Home");
-            //}
         }
 
         // GET: Profile

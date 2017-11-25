@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace WebbyWeb.Migrations
 {
-    public partial class IdentityAdded : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,20 @@ namespace WebbyWeb.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Profile",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Password = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    UserName = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Profile", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,6 +167,30 @@ namespace WebbyWeb.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Habit",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    DoneOrNot = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    ProfileID = table.Column<int>(type: "INTEGER", nullable: true),
+                    ProfileName = table.Column<string>(type: "TEXT", nullable: true),
+                    Time = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Habit", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Habit_Profile_ProfileID",
+                        column: x => x.ProfileID,
+                        principalTable: "Profile",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -189,6 +227,11 @@ namespace WebbyWeb.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Habit_ProfileID",
+                table: "Habit",
+                column: "ProfileID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -209,10 +252,16 @@ namespace WebbyWeb.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Habit");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Profile");
         }
     }
 }

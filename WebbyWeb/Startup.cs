@@ -31,6 +31,13 @@ namespace WebbyWeb
                 .AddEntityFrameworkStores<HabitContext>()   //links user to DB
                 .AddDefaultTokenProviders();    //default tokens allow temp access, useful for password reset, change password
             
+            services.AddAuthentication()
+                .AddCookie(options => {
+                    options.LoginPath = "/Home/Index";
+                    options.AccessDeniedPath = "/Home/Index";
+                    options.LogoutPath = "/Home/Index/";
+                });
+
             services.AddMvc();
 
             // Adds a default in-memory implementation of IDistributedCache.

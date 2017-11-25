@@ -1,6 +1,4 @@
 ﻿
-
-
 /*event listener for add times button*/
 $('#AddTimeButton')[0].addEventListener('click',function(event){
     event.preventDefault();
@@ -98,7 +96,8 @@ $('#HabitForm').on("submit",function(event){
                     Name: $('#habit').val(),
                     Time: timeString,
                     DoneOrNot: doneOrNot,
-                    Description: $('#HabitDescription').val()
+                    Description: $('#HabitDescription').val(),
+                    ProfileName:$('#profileName')[0].innerText
                 }
             }
         );

@@ -82,6 +82,9 @@ end modal -->
 			<td id='HabitDoneOrNot'>
                 @Html.DisplayFor(modelItem => item.DoneOrNot)
             </td>
+            <td id='ProfileName'>
+                @Html.DisplayFor(modelItem => item.ProfileName)
+            </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
@@ -177,7 +180,7 @@ function loadCalendar(){
 function loadEvents (){
     var habitMap;
     var count=1;
-    //cycling through each habit
+    //cycling through each habit (each row of hidden habit table is habit)
     while (count >0){
         var entity = $('#'+count)[0];
         count++;
@@ -385,6 +388,7 @@ function getHabit(habitId){//returns either the habit or null if not there
 //posts habit to DB
 function postHabit(id,habitContainer)
 {
+    // { var = User.Identity. }
     var token = $("[name='__RequestVerificationToken']").val();
     $.ajax(
             {
@@ -395,7 +399,8 @@ function postHabit(id,habitContainer)
                     Name: habitContainer.name,
                     Time: habitContainer.time,
                     Description: habitContainer.description,
-                    DoneOrNot: habitContainer.doneOrNot
+                    DoneOrNot: habitContainer.doneOrNot,
+                    ProfileName: habitContainer.ProfileName
                     
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -438,7 +443,6 @@ function updateHabit(habitId,givenDoneOrNot){
         hold[indexOfTime]=givenDoneOrNot;
         habitContainer.doneOrNot=hold.join('');
         habitContainer.doneOrNot[indexOfTime]=givenDoneOrNot; //binary at given index switches to what givenDoneOrNot is
-
         postHabit(id,habitContainer);
     })
 };

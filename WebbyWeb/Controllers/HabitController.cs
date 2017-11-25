@@ -61,18 +61,17 @@ namespace WebbyWeb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Time,Description,DoneOrNot")] Habit habit)
+        public async Task<IActionResult> Create([Bind("ID,Name,Time,Description,DoneOrNot,ProfileName")] Habit habit)
         {
             try
             {
                 //need profile ID
-                int profileId = (int) HttpContext.Session.GetInt32("ProfileId");
-                if(profileId >0){
-                    habit.ID = profileId;
-                }
-                else{
-                    return View("NotLoggedIn");
-                }
+                // if(profileId >0){
+                //     habit.ID = profileId;
+                // }
+                // else{
+                //     return View("NotLoggedIn");
+                // }
                 
                 if (ModelState.IsValid)
                 {
@@ -109,7 +108,7 @@ namespace WebbyWeb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Time,Description,DoneOrNot")] Habit habit)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Time,Description,DoneOrNot,ProfileName")] Habit habit)
         {
             //need profile ID
             if (id != habit.ID)

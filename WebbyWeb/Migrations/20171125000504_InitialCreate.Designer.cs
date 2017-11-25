@@ -11,8 +11,8 @@ using WebbyWeb.Models;
 namespace WebbyWeb.Migrations
 {
     [DbContext(typeof(HabitContext))]
-    [Migration("20171121233222_IdentityAdded")]
-    partial class IdentityAdded
+    [Migration("20171125000504_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -190,14 +190,16 @@ namespace WebbyWeb.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<int>("ProfileId");
+                    b.Property<int?>("ProfileID");
+
+                    b.Property<string>("ProfileName");
 
                     b.Property<string>("Time")
                         .IsRequired();
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ProfileId");
+                    b.HasIndex("ProfileID");
 
                     b.ToTable("Habit");
                 });
@@ -208,10 +210,12 @@ namespace WebbyWeb.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Password")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<string>("UserName")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(20);
 
                     b.HasKey("ID");
 
@@ -267,8 +271,7 @@ namespace WebbyWeb.Migrations
                 {
                     b.HasOne("WebbyWeb.Models.Profile", "Profile")
                         .WithMany("Habits")
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ProfileID");
                 });
 #pragma warning restore 612, 618
         }
