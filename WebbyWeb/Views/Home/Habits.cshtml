@@ -47,12 +47,17 @@
 </div>
 end modal -->
 
-
+@{
+    int count=0;
+}
 <table class="table" id='table'>
     <thead>
         <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ID)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Time)
@@ -68,10 +73,15 @@ end modal -->
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr id=@item.ID>
+        count+=1;
+        <tr id= @count>
             <td id='Name'>
                 
                 @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td id='HabitId'>
+                
+                @Html.DisplayFor(modelItem => item.ID)
             </td>
             <td id='HabitTime'>
                 @Html.DisplayFor(modelItem => item.Time)
@@ -81,9 +91,6 @@ end modal -->
             </td>
 			<td id='HabitDoneOrNot'>
                 @Html.DisplayFor(modelItem => item.DoneOrNot)
-            </td>
-            <td id='ProfileName'>
-                @Html.DisplayFor(modelItem => item.ProfileName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
@@ -113,8 +120,11 @@ var habitsComplete=0;
 loadCalendar();
 loadEvents();
 FormatPage();
-loadHabitCompletions();
+HideExtraTimes();
+
 loadProgressBar(window.habitsPercentComplete);
+loadHabitCompletions();
+updateProgressBar();
 
 $(document).ready(function(){
     $('#table')[0].style.display='none';
@@ -133,6 +143,27 @@ function FormatPage()
     add.id='ProgressBarCard';
     $('.header')[0].style="min-height: 70px";
     $('.header')[0].append(add);
+};
+
+function HideExtraTimes(){
+    var startTime = 21;
+    var endTime = 6
+
+    var timeCount =startTime;
+
+    while(timeCount<=endTime+24)
+    {
+        adjustedCount=timeCount;
+        if (timeCount>=24)
+        {
+            adjustedCount = timeCount-24;
+        }
+        if($('#'+adjustedCount+'time')[0].children.length==2){ //if calendar element has only 2 children aka no habits
+            $('#'+adjustedCount+'time')[0].style.display='none';
+        }
+        timeCount+=1;
+    }
+
 };
 
 function loadProgressBar(percentComplete)
@@ -177,6 +208,32 @@ function loadCalendar(){
     }
 }; 
 
+//format time to be displayed, given as string
+function FormatTime(time)
+{
+    var timeFirstTwo = time.slice(0,2);
+    if(timeFirstTwo <=11)
+    {
+        var timeDisplay = time +' am';
+        if(timeDisplay[0] == 0){
+            timeDisplay = timeDisplay.slice(1,);
+        }
+    }
+    if(timeFirstTwo >12)
+    {
+        var timeDisplay = (timeFirstTwo-12) +time.slice(2,) + ' pm';
+    }
+    if(timeFirstTwo==12)
+    {
+        var timeDisplay = time+' pm';
+    }
+    if(timeFirstTwo==00){
+        var timeDisplay = '12' +time.slice(2,) +'am';
+    }
+
+    return timeDisplay;
+}
+
 function loadEvents (){
     var habitMap;
     var count=1;
@@ -191,10 +248,10 @@ function loadEvents (){
         var timeArray = entity.children.HabitTime.innerText.split(',');
         var name=entity.children.Name.innerText;
         var entityDescription=entity.children.HabitDescr.innerText;
-        var entityId = entity.id;
+        var entityId = entity.id; //id as per table on page (increments from 1)
+        var entityIdTable = entity.children.HabitId.innerText; // id as per database for saving update
         var details=[name,entityDescription];   //details of entity for map
 
-        
         //adding each time for each habit
         for(let index =0;index<timeArray.length;index++)
             {
@@ -204,29 +261,14 @@ function loadEvents (){
                 
                 var time =timeArray[index].slice(0,2);
                 //timeDisplay format: hh:mm eg. 09:00
-                var timeDisplay=timeArray[index].slice(0,5);
+                var timeDisplay=FormatTime(timeArray[index].slice(0,5));
                 
                 if(time[0]==0){
                     time = time[1];
                 };
-                
-                if(timeDisplay[0]==0){
-                    timeDisplay=timeDisplay; //.slice(1,)+'<span>&nbsp</span>'+' - '+' <span> &nbsp </span> ';
-                }
-                else{
-                    timeDisplay=timeDisplay;
-                };
 
-                //habitMap.set(entity.id+'event'+index,details);    //add details to habit map [name,description] for pulling details on modal open
-
-
-                        //adding buttons (events) to times. Buttons get ID of their id from database +'event' + time. Going to div of time ID
-                        
-                        //help for adding on click functions to buttons
-                        //https://stackoverflow.com/questions/9643311/pass-string-parameter-in-an-onclick-function
-
-                let buttonId = entityId+'event'+index;
-
+                let buttonId = entityId+'event'+index; // eg. 1event0 where 1 and 0 is from table (for buttonId)
+                let buttonIdForButtonClick = entityIdTable+'event'+index; //eg. 3event0 where 3 and 0 is from database
                 //create button  
                 let newButton = document.createElement('BUTTON');
                         newButton.className = 'btn btn-custom';
@@ -264,7 +306,6 @@ function loadEvents (){
                                 var currentButton = withinArray[i];
                                 var currentHeight = currentButton.style.top.slice(0,2);
 
-                                console.log(newButton);
                                     if(currentHeight[1]=='p'){
                                         currentHeight=currentHeight[0];
                                     };
@@ -283,10 +324,8 @@ function loadEvents (){
                         else{
                             $('#'+time+'time').append(newButton);
                             neededSectionHeight=height;
-                            
                             };
-
-
+                        
                         //adjust section height
                         var defaultHeightWithButton=100;
                         var currentSectionHeight= $('#'+time+'time')[0].style.height.slice(0,3); //will always be 3 digit height
@@ -299,17 +338,16 @@ function loadEvents (){
                         }
                         
                     //when habit clicked
-                    $('#'+buttonId)[0].addEventListener('click',function(){buttonClick(buttonId)} ); 
-                        
-                        
+                    $('#'+buttonId)[0].addEventListener('click',function(){buttonClick(buttonId,buttonIdForButtonClick)} ); 
+
+                    //total nubmer of habits goes up
+                    window.numberOfHabits+=1;
                     };
-                };
-                
+                };   
 };
 
 function getButtonHeight(timeDisplay)
 {
-    //console.log(timeDisplay);
     var minHeight = 0;
     var maxHeight = 40;
 
@@ -317,31 +355,34 @@ function getButtonHeight(timeDisplay)
     
     
     var ret = Math.round((minute / 60)*40);
-    //console.log(ret);
     return ret;
 
 };
 
 function loadHabitCompletions()
 {
-    var test = getAllHabits();
-    return test.success(function(data)
-    {
-        var numberOfHabits = 0;
-        var habitsComplete = 0;
-        for(var count=0;count<data.length;count++)
-        {
-            var entity = data[count];
-            var doneOrNot = entity.doneOrNot;
-            var timeArray =entity.time.split(',');
-            
+    var numberOfHabits = 0;
+    var habitsComplete = 0;
+    var count=1;
+    while (count >0){
+        var entity = $('#'+count)[0];
+        
+        if(entity == null){
+            count=-1;
+            break;
+        };
+    
 
+
+        var doneOrNot = entity.children.HabitDoneOrNot.innerText;
+        var timeArray =entity.children.HabitTime.innerText.split(',');
+            
             for(let index =0;index<timeArray.length;index++)
             {
                 if(timeArray[index]==""){
                     continue;
                 };
-                var id = entity.id + 'event' + index;
+                var id = count + 'event' + index;
                 numberOfHabits+=1;
                 if(doneOrNot[index]==1) //habit at time is done
                 {
@@ -358,6 +399,7 @@ function loadHabitCompletions()
                 }
             
             }
+            count++;
         }
         
         var habitPercentComplete = Math.round((habitsComplete/numberOfHabits)*100);
@@ -366,10 +408,9 @@ function loadHabitCompletions()
         window.habitsComplete=habitsComplete;
         window.numberOfHabits=numberOfHabits;
         return (habitPercentComplete);
-    });
+    };
     
     
-};
 
 //gets single habit from controller
 function getHabit(habitId){//returns either the habit or null if not there
@@ -400,7 +441,7 @@ function postHabit(id,habitContainer)
                     Time: habitContainer.time,
                     Description: habitContainer.description,
                     DoneOrNot: habitContainer.doneOrNot,
-                    ProfileName: habitContainer.ProfileName
+                    ProfileName: habitContainer.profileName
                     
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -435,14 +476,15 @@ function updateHabit(habitId,givenDoneOrNot){
     let idTimeSplit = habitId.split('event');
     let id = idTimeSplit[0];
     let indexOfTime = idTimeSplit[1];
-
     var promise = getHabit(id);
     promise.success(function (habitContainer){
+
         var hold = habitContainer.doneOrNot.split('');  //changing binary string
 
         hold[indexOfTime]=givenDoneOrNot;
         habitContainer.doneOrNot=hold.join('');
         habitContainer.doneOrNot[indexOfTime]=givenDoneOrNot; //binary at given index switches to what givenDoneOrNot is
+
         postHabit(id,habitContainer);
     })
 };
@@ -450,39 +492,36 @@ function updateHabit(habitId,givenDoneOrNot){
 function updateProgressBar()
 {
     var newPercentComplete = Math.round((window.habitsComplete / window.numberOfHabits)*100);
+    if(window.numberOfHabits==0){
+        newPercentComplete=0;
+    }
     $('#ProgressBar')[0].style.width=newPercentComplete +'%';
     $('#ProgressBar')[0].innerText=newPercentComplete +'%';
 };
 
 //Habit button click
-function buttonClick(btnId) //when habit button clicked, pulling data from Map (dictionary)
+function buttonClick(elementId,habitId) //when habit button clicked, pulling data from Map (dictionary)
 {
     
-    var check = $('#'+btnId)[0].value;  //get button value, false= unchecked, true= checked
+    var check = $('#'+elementId)[0].value;  //get button value, false= unchecked, true= checked
 
     if(check=='true'){   //if habit done
-        //console.log('1');
 
-        $('#'+btnId)[0].value='false';
-        $('#'+btnId)[0].style.backgroundColor='blue';
-        $('#'+btnId)[0].style.opacity='1';
-        updateHabit(btnId,0);
+        $('#'+elementId)[0].value='false';
+        $('#'+elementId)[0].style.backgroundColor='blue';
+        $('#'+elementId)[0].style.opacity='1';
+        updateHabit(habitId,0);
         window.habitsComplete -=1;
     };
     if(check=='false'){   //if habit not done
-        //console.log('2');
 
-        $('#'+btnId)[0].value='true';
-        $('#'+btnId)[0].style.backgroundColor='rgb(0, 200, 105)';
-        $('#'+btnId)[0].style.opacity='.6';
-        updateHabit(btnId,1);
+        $('#'+elementId)[0].value='true';
+        $('#'+elementId)[0].style.backgroundColor='rgb(0, 200, 105)';
+        $('#'+elementId)[0].style.opacity='.6';
+        updateHabit(habitId,1);
         window.habitsComplete +=1;
     };
     updateProgressBar();
 }; 
-
-
-
-
 
 </script>

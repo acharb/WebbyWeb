@@ -141,7 +141,7 @@ namespace WebbyWeb.Controllers
 
         //Edit Habit in DB
         [HttpPost]
-        public async Task<IActionResult> EditHabit(Habit habit)
+        public async Task<IActionResult> EditHabit([Bind("ID,Name,Time,Description,DoneOrNot,ProfileName")] Habit habit)
         {
             if(ModelState.IsValid)
             {

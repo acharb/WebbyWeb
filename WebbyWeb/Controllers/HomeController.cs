@@ -68,13 +68,14 @@ namespace WebbyWeb.Controllers
             return RedirectToAction("StartHabits");
         }
         
-        public async Task<IActionResult> Habits(string profileName)
+        public async Task<IActionResult> Habits()
         {
+            string profileName = User.Identity.Name;
             if(User.Identity.IsAuthenticated)
             {
-                //var ret = await _context.Habit.Where(x=> x.ProfileName==profileName) .ToListAsync();
-                return View();
-                //return View(ret);
+                var ret = await _context.Habit.Where(x=> x.ProfileName==profileName).ToListAsync();
+                return View(ret);
+                
             }
             return View("NotLoggedIn");
         }

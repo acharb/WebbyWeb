@@ -11,7 +11,7 @@ using WebbyWeb.Models;
 namespace WebbyWeb.Migrations
 {
     [DbContext(typeof(HabitContext))]
-    [Migration("20171125000504_InitialCreate")]
+    [Migration("20171125001953_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
