@@ -48,7 +48,6 @@ namespace WebbyWeb
 
             services.AddSession(options =>
                 {
-
                     options.Cookie.HttpOnly = true;
                 });
         }
