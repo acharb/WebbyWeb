@@ -25,7 +25,10 @@ namespace WebbyWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<HabitContext>(options =>
-                                                options.UseSqlite("Data Source = Habit.db"));  //connecting
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            //services.AddDbContext<HabitContext>(options => 
+                                                //options.UseSqlite("Data Source = Habit.db"));  //connecting
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<HabitContext>()   //links user to DB
