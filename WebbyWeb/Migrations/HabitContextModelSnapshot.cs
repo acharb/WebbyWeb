@@ -224,6 +224,24 @@ namespace WebbyWeb.Migrations
                     b.ToTable("Profile");
                 });
 
+            modelBuilder.Entity("WebbyWeb.Models.Progress", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("DayTracker");
+
+                    b.Property<int>("MonthlyProgress");
+
+                    b.Property<string>("ProfileName");
+
+                    b.Property<int>("WeeklyProgress");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Progress");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
