@@ -13,7 +13,7 @@ namespace WebbyWeb.Models
         }
         public DbSet<WebbyWeb.Models.Habit> Habit { get; set; }
         public DbSet<WebbyWeb.Models.Profile> Profile { get; set; }
-
+        public DbSet<WebbyWeb.Models.Progress> Progress { get; set; }
    
 
     }
