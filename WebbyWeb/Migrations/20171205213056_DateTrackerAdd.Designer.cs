@@ -11,9 +11,10 @@ using WebbyWeb.Models;
 namespace WebbyWeb.Migrations
 {
     [DbContext(typeof(HabitContext))]
-    partial class HabitContextModelSnapshot : ModelSnapshot
+    [Migration("20171205213056_DateTrackerAdd")]
+    partial class DateTrackerAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

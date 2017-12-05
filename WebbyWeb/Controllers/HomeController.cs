@@ -72,6 +72,9 @@ namespace WebbyWeb.Controllers
             string profileName = User.Identity.Name;
             if(User.Identity.IsAuthenticated)
             {
+                var progress = GetProgress();
+                ViewBag.DayTracker = progress.DayTracker;
+
                 var ret = await _context.Habit.Where(x=> x.ProfileName==profileName).ToListAsync();
                 return View(ret);
                 
@@ -172,7 +175,8 @@ namespace WebbyWeb.Controllers
                         ProfileName=username,
                         WeeklyProgress=0,
                         MonthlyProgress=0,
-                        DayTracker =0
+                        DayTracker =0,
+                        DateTracker=DateTime.Now
                             });
                     _context.SaveChanges();
                     return 1;

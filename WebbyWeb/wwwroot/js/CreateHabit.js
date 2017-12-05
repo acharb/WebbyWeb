@@ -98,10 +98,10 @@ $('#HabitForm').on("submit",function(event){
                     DoneOrNot: doneOrNot,
                     Description: $('#HabitDescription').val(),
                     ProfileName:$('#profileName')[0].innerText
-                },
-                success: function (){UpdateProgress();}
+                }
             }
         );
+        UpdateProgress();
         $('#habit').val("");    //clear habit name input textbox
         $('#InputTime').val("");
         $('#HabitDescription').val("");

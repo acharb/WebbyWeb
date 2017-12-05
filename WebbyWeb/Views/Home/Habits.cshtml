@@ -12,8 +12,23 @@
 
 <div id="calendar-container">
     <header>
-        <br>
-
+        <div style="text-align:right">
+            <div class="btn-group dropdown">
+                <div class="col-sm-9"></div>
+                <button class="btn btn-simple dropdown-toggle" style="font-size:large;" data-toggle="dropdown">
+                    <span style="text-transform:lowercase"> @ViewBag.DayTracker days in  </span> 
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu" >
+                    <li>
+                        <a style="text-transform:lowercase">update</a>
+                    </li>
+                    <li>
+                        <a style="text-transform:lowercase">reset</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <h2 style='font-weight:bold; text-align:center'>daily</h2>
     </header>
 
@@ -24,28 +39,6 @@
     </div>
 </div>
 
-
-<!-- Begin Modal for viewing habit
-<div class="modal fade" id="habitModal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h2 id="HabitName"></h2>
-            </div>
-            <div class="modal-body">
-                <div id='HabitDescription'></div>
-            </div>
-            <div class="modal-footer">
-                <button id="completeBtn" class="btn btn-success" data-dismiss="modal" value='false'>Completed</button>
-                <div id="idPlaceholder" style="display:none;"></div>   
-                <div id="checkPlaceholder" style="display:none;"></div> 
-            </div>
-            
-        </div>
-    </div>
-</div>
-end modal -->
 
 @{
     int count=0;
@@ -108,7 +101,6 @@ end modal -->
 
 <script>
 
-
 // ---------------------CLUES-----------------------
 //button elements have id: entity # from DB + 'event'+ index of time
 //time elements (list items) have id: hour (military time) + 'time'
@@ -132,7 +124,7 @@ $(document).ready(function(){
 
 function FormatPage()
 {
-    $('#mainCard')[0].style='background:white;margin: 0px 200px 0px;';
+    $('#mainCard')[0].style='background:white;margin: 0px 200px 10px;';
     
     var add= document.createElement('div');
     add.className='main-raised';
@@ -426,7 +418,7 @@ function getHabit(habitId){//returns either the habit or null if not there
     return ret.success();
 };
 
-//posts habit to DB
+//POST habit to DB
 function postHabit(id,habitContainer)
 {
     // { var = User.Identity. }
@@ -454,7 +446,6 @@ function postHabit(id,habitContainer)
             }
         )
 };
-
 
 //get all habits from controller
 function getAllHabits()
