@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebbyWeb.Models;
@@ -143,6 +144,7 @@ namespace WebbyWeb.Controllers
 
                 if (result.Succeeded)
                 {
+                    int add = AddProgressProfile(profile.UserName);
                     await _signInManager.SignInAsync(user, false); //signs in if registrationw orks, not persistent, logs out if page left
                     return RedirectToAction("Welcome");
                 }
@@ -158,6 +160,52 @@ namespace WebbyWeb.Controllers
             return View(profile);
             
         }
+
+        public int AddProgressProfile(string username)
+        {
+            try{
+                if(username != null)
+                {
+                    _context.Progress.Add(new Progress{
+                        ProfileName=username,
+                        WeeklyProgress=0,
+                        MonthlyProgress=0,
+                        DayTracker =0
+                            });
+                    _context.SaveChanges();
+                    return 1;
+                };
+                return 0;
+            }
+            catch(Exception exc)
+            {
+                throw exc;
+                //return 0;
+            }
+        }
+
+        public async Task<WebbyWeb.Models.Progress> GetProgress()
+        {
+            string profileName = User.Identity.Name;
+            try
+            {
+                if (profileName==null)
+                    return null;
+                
+                var progress = await _context.Progress.Where(x=>x.ProfileName==profileName).FirstOrDefaultAsync();
+                if(progress==null)
+                    return null;
+                return progress;
+
+            }
+            catch(Exception exc)
+            {
+                throw exc;
+            }
+
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,UserName,Password")] Profile profile)

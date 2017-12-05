@@ -1,13 +1,40 @@
-﻿<div class="PieContainer">
+﻿
+<ul class="nav nav-pills" role="tablist">
+    <li class="active">
+        <a href="#week" role="tab" data-toggle="tab">
+            <i class="material-icons">dashboard</i>
+            Week
+        </a>
+    </li>
+    <li class="active">
+        <a href="#week" role="tab" data-toggle="tab">
+            <i class="material-icons">dashboard</i>
+            Month
+        </a>
+    </li>
+</ul>
+
+<div class="col-md-3 dropdown">
+    <a class="btn btn-simple dropdown-toggle" data-toggle="dropdown">
+        habits
+        <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+        <li>first</li>
+    </ul>
+</div>
+
+<div class="PieContainer">
   <canvas id="pieChart"></canvas>
 </div>
+
 
 
 <div id="piechart" style="width: 900px; height: 500px;"></div>
 
 <script>
   FormatPage();
-  CreatePieChart();
+  PopulatePage();
 
   function CreatePieChartFromArray(completeArray){
 
@@ -33,15 +60,16 @@
         }    
     });
   };
-  
-  //get all habits from controller
-  function CreatePieChart(){
+
+  // get progress and create pie chart
+  function PopulatePage(){
       var ret = $.ajax(
               {
                   type:"GET",
-                  url:"/Habit/DetailData",
+                  url:"/Home/GetProgress",
                   success: function(data){
-                      var completeArray = calculateHabitsComplete(data);
+                      
+                      var completeArray = CalculateHabitsComplete(data);
                       CreatePieChartFromArray(completeArray);
                   }
               }
@@ -50,8 +78,8 @@
   };
 
   //return array [habits complete (by time), total habits (by times)]
-  function calculateHabitsComplete(data){
-
+  function CalculateHabitsComplete(data){
+      console.log(data);
       var numberOfHabits = 0;
       var habitsComplete = 0;
       //cycle through each habit
@@ -75,8 +103,8 @@
 
 
   function FormatPage(){
-    $('#mainCard')[0].className='main';
-    $('#mainCard')[0].style.width='500px';
+    //$('#mainCard')[0].className='main';
+    //$('#mainCard')[0].style.width='500px';
     $('#mainCard')[0].style.margin='auto';
     $('#mainCard')[0].style.marginTop='-20px';
   };
