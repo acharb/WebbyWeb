@@ -8,7 +8,9 @@ namespace WebbyWeb.Models
         public int ID { get; set; }
         public string ProfileName { get; set; }
         public int WeeklyProgress { get; set; }
+        public int WeeklyPtsPossible {get;set;}
         public int MonthlyProgress { get; set; }
+        public int MonthlyPtsPossible {get;set;}
         public int DayTracker { get; set; }
         public int NumOfHabits {get;set;}
 

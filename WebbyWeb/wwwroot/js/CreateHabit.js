@@ -18,6 +18,7 @@ function PostTimes(time)
     }
 };
 
+
 //format time to be displayed, given as string
 function FormatTime(time)
 {
@@ -43,7 +44,6 @@ function FormatTime(time)
 
     return timeDisplay;
 }
-
 
 //Open Modal on create habit button
 $('#OpenModalButton').click(function(event){ 
@@ -85,7 +85,7 @@ $('#HabitForm').on("submit",function(event){
         for(var i=0;i<timesArray.length;i++){
             timeString = timeString.concat(timesArray[i]+',');
             doneOrNot = doneOrNot.concat('0'); //0 = not done, 1 =done
-        }
+        };
 
         $.ajax(
             {
@@ -98,7 +98,8 @@ $('#HabitForm').on("submit",function(event){
                     DoneOrNot: doneOrNot,
                     Description: $('#HabitDescription').val(),
                     ProfileName:$('#profileName')[0].innerText
-                }
+                },
+                success: function (){UpdateProgress();}
             }
         );
         $('#habit').val("");    //clear habit name input textbox
@@ -108,3 +109,13 @@ $('#HabitForm').on("submit",function(event){
         timesArray=[];  //clear times
         doneOrNot="";   // clear done or not
 });
+
+function UpdateProgress()
+{
+    $.ajax(
+    {
+        type:"POST",
+        url:"/Home/AddHabitToProgress"
+
+    });
+}

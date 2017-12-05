@@ -1,10 +1,24 @@
 ﻿@model WebbyWeb.Models.Habit
+<!-- # of days display -->
+<div style="text-align:right">
+    <div class="btn-group dropdown">
+        <div class="col-sm-9"></div>
+        <button class="btn btn-simple dropdown-toggle" style="font-size:large;" data-toggle="dropdown">
+            <span style="text-transform:lowercase"> @ViewBag.DayTracker days in  </span> 
+            <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu" >
+            <li>
+                <a style="text-transform:lowercase">reset</a>
+            </li>
+        </ul>
+    </div>
+</div>
 
-
-<h2 id="title">add habits</h2>
-
+<!-- dispalys habits once added -->
 <h2 id="ShowHabits"></h2>
 
+<!-- input habit name, open modal on create -->
 <div id="habitInputForm" class="form-group label-floating">
 	<label class="control-label">Add a habit</label>
 	<input type="text" id="habit" class="form-control " />
@@ -14,8 +28,6 @@
     </button>
 
 </div>
-
-
 
 <!-- Modal Pop up Content -->
 <div class="modal fade" id="myModal" role="dialog">
@@ -60,7 +72,7 @@
         </div>
     </div>
 </div>
-<!-- End Modal -->
+
 
 
 <script src="~/js/CreateHabit.js"></script>

@@ -45,11 +45,14 @@ namespace WebbyWeb.Controllers
         {
             if(User.Identity.IsAuthenticated)
             {
+                var progress = GetProgress();
+                ViewBag.DayTracker = progress.DayTracker;
                 return View();
             }
             return View("NotLoggedIn");
         }
 
+    
         public IActionResult SaveHabit(Models.Habit Habit)
         {
             Console.WriteLine(Habit.Name);
@@ -160,7 +163,6 @@ namespace WebbyWeb.Controllers
             return View(profile);
             
         }
-
         public int AddProgressProfile(string username)
         {
             try{
@@ -184,7 +186,7 @@ namespace WebbyWeb.Controllers
             }
         }
 
-        public async Task<WebbyWeb.Models.Progress> GetProgress()
+        public WebbyWeb.Models.Progress GetProgress()
         {
             string profileName = User.Identity.Name;
             try
@@ -192,7 +194,7 @@ namespace WebbyWeb.Controllers
                 if (profileName==null)
                     return null;
                 
-                var progress = await _context.Progress.Where(x=>x.ProfileName==profileName).FirstOrDefaultAsync();
+                var progress = _context.Progress.Where(x=>x.ProfileName==profileName).FirstOrDefault();
                 if(progress==null)
                     return null;
                 return progress;
@@ -203,6 +205,25 @@ namespace WebbyWeb.Controllers
                 throw exc;
             }
 
+        }
+
+        public async Task<IActionResult> AddHabitToProgress()
+        {
+            WebbyWeb.Models.Progress progress = GetProgress();
+            progress.NumOfHabits +=1;
+
+            progress.WeeklyPtsPossible = progress.WeeklyPtsPossible + (7-progress.DayTracker)*1;
+            progress.MonthlyPtsPossible = progress.MonthlyPtsPossible + (30-progress.DayTracker)*1;
+            try
+            {
+                _context.Update(progress);
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception exc)
+            {
+                throw exc;
+            }
+            return RedirectToAction("StartHabits");
         }
 
 
