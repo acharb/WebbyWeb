@@ -119,7 +119,12 @@ namespace WebbyWeb.Controllers
                 var result = await _signInManager.PasswordSignInAsync(profile.UserName, profile.Password, rememberMe, false);
 
                 if(result.Succeeded)
+                {
+                    UpdateDayTracker();
                     return View("Welcome");
+                }
+
+                    
                 
                 ModelState.AddModelError("","Invalid Login Attempt");
                 return View(profile);
@@ -128,6 +133,20 @@ namespace WebbyWeb.Controllers
             
             return View(profile);
 
+        }
+        public void UpdateDayTracker()
+        {
+            WebbyWeb.Models.Progress progress = GetProgress();
+            DateTime oldDate = progress.DateTracker; //old date
+            DateTime todaysDate = DateTime.Now.Date; //todays
+            
+            int span = (todaysDate-oldDate).Days;
+            int DayTracker = progress.DayTracker;
+
+            if(span!= DayTracker)  //DateTracker off, then reset all habits DoneOrNot (already added to progress when clicked complete)
+            {
+                progress.DayTracker=span;
+            }
         }
         public async Task<IActionResult> Logout()
         {
@@ -176,7 +195,7 @@ namespace WebbyWeb.Controllers
                         WeeklyProgress=0,
                         MonthlyProgress=0,
                         DayTracker =0,
-                        DateTracker=DateTime.Now
+                        DateTracker=DateTime.Now.Date
                             });
                     _context.SaveChanges();
                     return 1;
