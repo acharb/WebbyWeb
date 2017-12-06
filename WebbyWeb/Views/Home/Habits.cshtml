@@ -427,11 +427,7 @@ function getHabit(habitId){//returns either the habit or null if not there
 function postHabit(id,habitContainer,givenDoneOrNot)
 {
     var token = $("[name='__RequestVerificationToken']").val();
-    $.ajax(
-            {
-                method:"POST",
-                url:"/Habit/EditHabit/",
-                data: {
+    var habit= {
                     ID:id,
                     Name: habitContainer.name,
                     Time: habitContainer.time,
@@ -439,7 +435,13 @@ function postHabit(id,habitContainer,givenDoneOrNot)
                     DoneOrNot: habitContainer.doneOrNot,
                     ProfileName: habitContainer.profileName
                     
-                },
+                };
+    $.ajax(
+            {
+                method:"POST",
+                url:"/Habit/EditHabit/",
+                data: habit,
+                //contentType:"application/json; charset=utf-8",
                 error: function (xhr, ajaxOptions, thrownError) {
                     
                     console.log(ajaxOptions.toString());

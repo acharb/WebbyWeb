@@ -13,7 +13,7 @@ namespace WebbyWeb.Models
         [Required,MinLength(6),MaxLength(30),DataType(DataType.Password),Display(Name="password")]
         public string Password { get; set; } //string of times, seperated by commas
 
-        public List<Habit> Habits {get;set;}
+        //public List<Habit> Habits {get;set;}
 
 
         

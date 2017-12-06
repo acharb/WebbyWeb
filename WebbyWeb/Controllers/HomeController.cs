@@ -46,7 +46,8 @@ namespace WebbyWeb.Controllers
             if(User.Identity.IsAuthenticated)
             {
                 var progress = GetProgress();
-                ViewBag.DayTracker = progress.DayTracker;
+                if(progress!=null)
+                    ViewBag.DayTracker = progress.DayTracker;
                 return View();
             }
             return View("NotLoggedIn");
@@ -73,7 +74,8 @@ namespace WebbyWeb.Controllers
             if(User.Identity.IsAuthenticated)
             {
                 var progress = GetProgress();
-                ViewBag.DayTracker = progress.DayTracker;
+                if(progress != null)
+                    ViewBag.DayTracker = progress.DayTracker;
 
                 var ret = await _context.Habit.Where(x=> x.ProfileName==profileName).ToListAsync();
                 return View(ret);

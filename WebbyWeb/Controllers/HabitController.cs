@@ -142,13 +142,11 @@ namespace WebbyWeb.Controllers
                     _context.Update(habit);
                     _context.SaveChangesAsync();
                 }
-                catch (Exception exc)
+                catch (SystemException exc)
                 {
                     throw exc;
                 }
-                //return RedirectToAction(nameof(Index));
             }
-            //return View(habit);
         }
         
 
