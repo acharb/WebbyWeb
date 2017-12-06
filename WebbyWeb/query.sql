@@ -1,0 +1,13 @@
+DROP Table AspNetUserTokens
+DROP Table AspNetUsers
+DROP Table Progress
+DROP Table Test
+DROP Table Habits
+DROP Table _EFMigrationsHistory
+DROP Table Progress
+DROP Table AspNetRoles
+DROP Table [Profile]
+DROP Table AspNetRoleClaims
+DROP Table AspNetUserClaims
+DROP Table AspNetUserLogins
+DROP Table AspNetUserRoles

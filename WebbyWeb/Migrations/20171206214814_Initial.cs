@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace WebbyWeb.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -60,6 +60,26 @@ namespace WebbyWeb.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Profile", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Progress",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    DateTracker = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DayTracker = table.Column<int>(type: "int", nullable: false),
+                    MonthlyProgress = table.Column<int>(type: "int", nullable: false),
+                    MonthlyPtsPossible = table.Column<int>(type: "int", nullable: false),
+                    NumOfHabits = table.Column<int>(type: "int", nullable: false),
+                    ProfileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WeeklyProgress = table.Column<int>(type: "int", nullable: false),
+                    WeeklyPtsPossible = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Progress", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -256,6 +276,9 @@ namespace WebbyWeb.Migrations
 
             migrationBuilder.DropTable(
                 name: "Habit");
+
+            migrationBuilder.DropTable(
+                name: "Progress");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

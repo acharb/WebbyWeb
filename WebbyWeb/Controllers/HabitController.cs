@@ -26,15 +26,15 @@ namespace WebbyWeb.Controllers
         }
 
         // GET: Habit/Details/5, changed
-        public async Task<WebbyWeb.Models.Habit> Details(int? id)
+        public WebbyWeb.Models.Habit Details(int? id)
         {
             if (id == null)
             {
                 return null;
             }
 
-            var habit = await _context.Habit
-                .SingleOrDefaultAsync(m => m.ID == id);
+            var habit = _context.Habit
+                .SingleOrDefault(m => m.ID == id);
             if (habit == null)
             {
                 return null;
@@ -64,15 +64,7 @@ namespace WebbyWeb.Controllers
         public async Task<IActionResult> Create([Bind("ID,Name,Time,Description,DoneOrNot,ProfileName")] Habit habit)
         {
             try
-            {
-                //need profile ID
-                // if(profileId >0){
-                //     habit.ID = profileId;
-                // }
-                // else{
-                //     return View("NotLoggedIn");
-                // }
-                
+            {   
                 if (ModelState.IsValid)
                 {
                     _context.Add(habit);
@@ -141,22 +133,22 @@ namespace WebbyWeb.Controllers
 
         //Edit Habit in DB
         [HttpPost]
-        public async Task<IActionResult> EditHabit([Bind("ID,Name,Time,Description,DoneOrNot,ProfileName")] Habit habit)
+        public void EditHabit(Habit habit)
         {
             if(ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(habit);
-                    await _context.SaveChangesAsync();
+                    _context.SaveChangesAsync();
                 }
                 catch (Exception exc)
                 {
                     throw exc;
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
-            return View(habit);
+            //return View(habit);
         }
         
 

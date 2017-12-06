@@ -297,7 +297,7 @@ namespace WebbyWeb.Migrations
 
             modelBuilder.Entity("WebbyWeb.Models.Habit", b =>
                 {
-                    b.HasOne("WebbyWeb.Models.Profile", "Profile")
+                    b.HasOne("WebbyWeb.Models.Profile")
                         .WithMany("Habits")
                         .HasForeignKey("ProfileID");
                 });

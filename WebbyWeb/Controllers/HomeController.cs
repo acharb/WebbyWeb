@@ -124,8 +124,6 @@ namespace WebbyWeb.Controllers
                     return View("Welcome");
                 }
 
-                    
-                
                 ModelState.AddModelError("","Invalid Login Attempt");
                 return View(profile);
 
@@ -143,9 +141,37 @@ namespace WebbyWeb.Controllers
             int span = (todaysDate-oldDate).Days;
             int DayTracker = progress.DayTracker;
 
-            if(span!= DayTracker)  //DateTracker off, then reset all habits DoneOrNot (already added to progress when clicked complete)
+            if(span!= DayTracker)  //DateTracker off,
             {
+                ResetDoneOrNotForProfile();
                 progress.DayTracker=span;
+            }
+        }
+        //resetting all DoneOrNot to undone ( 0s )
+        public void ResetDoneOrNotForProfile()
+        {
+            var habitArray = _context.Habit.Where(x=> x.ProfileName==User.Identity.Name).ToList();
+            string newDoneOrNot = "";
+
+            foreach(var habit in habitArray)
+            {
+                string DoneOrNot = habit.DoneOrNot;
+                List<char> x = new List<char>();
+                for (int i =0;i<DoneOrNot.Length;i++)
+                {
+                    x.Add('0');
+                }
+                newDoneOrNot = String.Join("",x);
+                habit.DoneOrNot = newDoneOrNot;
+                try
+                {
+                    _context.Update(habit);
+                    _context.SaveChanges();
+                }
+                catch(Exception exc)
+                {
+                    throw exc;
+                }
             }
         }
         public async Task<IActionResult> Logout()
@@ -208,7 +234,6 @@ namespace WebbyWeb.Controllers
                 //return 0;
             }
         }
-
         public WebbyWeb.Models.Progress GetProgress()
         {
             string profileName = User.Identity.Name;
@@ -227,9 +252,7 @@ namespace WebbyWeb.Controllers
             {
                 throw exc;
             }
-
         }
-
         public async Task<IActionResult> AddHabitToProgress()
         {
             WebbyWeb.Models.Progress progress = GetProgress();
@@ -248,7 +271,29 @@ namespace WebbyWeb.Controllers
             }
             return RedirectToAction("StartHabits");
         }
-
+        public void AdjustPointsToProgress(int doneOrNot)
+        {
+            var progress = GetProgress();
+            if(doneOrNot==1) // add points, going from undone to done
+            {
+                progress.WeeklyProgress +=1;
+                progress.MonthlyProgress +=1;
+            }
+            else // subtract points, going from done to undone
+            {
+                progress.WeeklyProgress -=1;
+                progress.MonthlyProgress -=1;
+            }
+            try
+            {
+                _context.Update(progress);
+                _context.SaveChanges();
+            }
+            catch(Exception exc)
+            {
+                throw exc;
+            }
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

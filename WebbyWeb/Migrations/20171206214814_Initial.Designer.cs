@@ -11,8 +11,8 @@ using WebbyWeb.Models;
 namespace WebbyWeb.Migrations
 {
     [DbContext(typeof(HabitContext))]
-    [Migration("20171205213056_DateTrackerAdd")]
-    partial class DateTrackerAdd
+    [Migration("20171206214814_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -298,7 +298,7 @@ namespace WebbyWeb.Migrations
 
             modelBuilder.Entity("WebbyWeb.Models.Habit", b =>
                 {
-                    b.HasOne("WebbyWeb.Models.Profile", "Profile")
+                    b.HasOne("WebbyWeb.Models.Profile")
                         .WithMany("Habits")
                         .HasForeignKey("ProfileID");
                 });

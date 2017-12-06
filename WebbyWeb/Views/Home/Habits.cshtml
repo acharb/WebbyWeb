@@ -410,6 +410,11 @@ function getHabit(habitId){//returns either the habit or null if not there
             {
                 type:"GET",
                 url:"/Habit/Details/"+habitId,
+                error: function (xhr, ajaxOptions, thrownError) {
+                    
+                    console.log(ajaxOptions.toString());
+                    console.log(thrownError.toString());
+                },
                 success: function(data){
                     return data;
                 }
@@ -419,14 +424,13 @@ function getHabit(habitId){//returns either the habit or null if not there
 };
 
 //POST habit to DB
-function postHabit(id,habitContainer)
+function postHabit(id,habitContainer,givenDoneOrNot)
 {
-    // { var = User.Identity. }
     var token = $("[name='__RequestVerificationToken']").val();
     $.ajax(
             {
-                type:"POST",
-                url:"/Habit/EditHabit",
+                method:"POST",
+                url:"/Habit/EditHabit/",
                 data: {
                     ID:id,
                     Name: habitContainer.name,
@@ -441,7 +445,10 @@ function postHabit(id,habitContainer)
                     console.log(ajaxOptions.toString());
                     console.log(thrownError.toString());
                 },
-                success: function(){console.log('updated Habit')}
+                success: function(){
+                    console.log('updated Habit');
+                    //AdjustPointsToProgress(givenDoneOrNot);
+                    }
                 
             }
         )
@@ -468,17 +475,30 @@ function updateHabit(habitId,givenDoneOrNot){
     let idTimeSplit = habitId.split('event');
     let id = idTimeSplit[0];
     let indexOfTime = idTimeSplit[1];
-    var promise = getHabit(id);
-    promise.success(function (habitContainer){
-
+    //var promise = getHabit(id);
+    $.when( getHabit(id) ).done(function (habitContainer){
+        console.log(habitContainer);
+        
         var hold = habitContainer.doneOrNot.split('');  //changing binary string
 
         hold[indexOfTime]=givenDoneOrNot;
         habitContainer.doneOrNot=hold.join('');
         habitContainer.doneOrNot[indexOfTime]=givenDoneOrNot; //binary at given index switches to what givenDoneOrNot is
+        
+        postHabit(id,habitContainer,givenDoneOrNot);
+    });
+    /*
+    promise.success(function (habitContainer){
+        console.log(habitContainer);
+        
+        var hold = habitContainer.doneOrNot.split('');  //changing binary string
 
-        postHabit(id,habitContainer);
-    })
+        hold[indexOfTime]=givenDoneOrNot;
+        habitContainer.doneOrNot=hold.join('');
+        habitContainer.doneOrNot[indexOfTime]=givenDoneOrNot; //binary at given index switches to what givenDoneOrNot is
+        
+        postHabit(id,habitContainer,givenDoneOrNot); 
+    })*/
 };
 
 function updateProgressBar()
@@ -503,6 +523,7 @@ function buttonClick(elementId,habitId) //when habit button clicked, pulling dat
         $('#'+elementId)[0].style.backgroundColor='blue';
         $('#'+elementId)[0].style.opacity='1';
         updateHabit(habitId,0);
+        //AdjustPointsToProgress(0);
         window.habitsComplete -=1;
     };
     if(check=='false'){   //if habit not done
@@ -511,9 +532,26 @@ function buttonClick(elementId,habitId) //when habit button clicked, pulling dat
         $('#'+elementId)[0].style.backgroundColor='rgb(0, 200, 105)';
         $('#'+elementId)[0].style.opacity='.6';
         updateHabit(habitId,1);
+        //AdjustPointsToProgress(1);
         window.habitsComplete +=1;
     };
     updateProgressBar();
 }; 
 
+function AdjustPointsToProgress(doneOrNot)
+{
+    $.ajax(
+         {
+             method:"POST",
+             url:"/Home/AdjustPointsToProgress/",
+             data:{doneOrNot},
+             error: function (xhr, ajaxOptions, thrownError) {
+                    
+                    console.log(ajaxOptions.toString());
+                    console.log(thrownError.toString());
+                },
+             success: function(){console.log('progress updated')}
+         }
+     )   
+}
 </script>
