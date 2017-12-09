@@ -1,106 +1,161 @@
 ﻿
-<ul class="nav nav-pills" role="tablist">
-    <li class="active">
-        <a href="#week" role="tab" data-toggle="tab">
-            <i class="material-icons">dashboard</i>
-            Week
-        </a>
-    </li>
-    <li class="active">
-        <a href="#week" role="tab" data-toggle="tab">
-            <i class="material-icons">dashboard</i>
-            Month
-        </a>
-    </li>
-</ul>
-
-<div class="col-md-3 dropdown">
-    <a class="btn btn-simple dropdown-toggle" data-toggle="dropdown">
-        habits
-        <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-        <li>first</li>
+<div class="row">
+    <div class="col-md-3" style="width: 220px;padding-right: 0;margin-right: 0;">
+    <ul class="nav nav-pills nav-pills-info" role="tablist">
+        <li class="active">
+            <a id="weekPill" role="tab" data-toggle="tab">
+                <!-- <i class="material-icons">dashboard</i> -->
+                <span style="text-transform:lowercase">week</span>
+            </a>
+        </li>
+        <li>
+            <a id="monthPill" role="tab" data-toggle="tab">
+                <!-- <i class="material-icons">dashboard</i> -->
+                <span style="text-transform:lowercase">month</span>
+            </a>
+        </li>
     </ul>
+    </div>
+    <div class="col-md-3 dropdown" style="margin:0; padding:0; text-align:left">
+        <a style="margin:0; text-transform:lowercase" class="btn btn-simple btn-primary dropdown-toggle" data-toggle="dropdown">
+            habits
+            <b class="caret"></b>
+        </a>
+        <ul id="habitListDropdown" class="dropdown-menu">
+        </ul>
+    </div>
+    
+      
 </div>
 
-<div class="PieContainer">
-  <canvas id="pieChart"></canvas>
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div id="ChartContainer" class="col-md-7" >
+        <canvas id="ChartCanvas"></canvas>
+    </div>
 </div>
-
-
-
-<div id="piechart" style="width: 900px; height: 500px;"></div>
 
 <script>
   FormatPage();
   PopulatePage();
+  GetHabits().then(ListHabits);
 
-  function CreatePieChartFromArray(completeArray){
+  function CreatePieChart(data){
 
-    var todaysDone = completeArray[0];
-    var todaysLeft = completeArray[1]-todaysDone;
-    var totalLeft = completeArray[1]*7 - todaysDone;
+    var weekPtsPossible = data.weeklyPtsPossible;
+    var weekPtsGained = data.weeklyProgress;
+    var monthPtsPossible = data.monthlyPtsPossible;
+    var monthPtsGained = data.monthlyProgress;
+    if (weekPtsGained <0)
+    {
+        weekPtsGained = 0;
+    };
+    if (monthPtsGained <0)
+    {
+        monthPtsGained = 0;
+    };
 
-    var ctxP = document.getElementById("pieChart").getContext('2d');
-    var myPieChart = new Chart(ctxP, {
-        type: 'pie',
+    var weekPtsLeft = weekPtsPossible-weekPtsGained;
+    var monthPtsLeft = monthPtsPossible-monthPtsGained;
+
+
+    var ctxP1 = document.getElementById("ChartCanvas").getContext('2d');
+
+    //color gradients
+    var gradientBlue = ctxP1.createLinearGradient(0, 0, 700, 700);
+    gradientBlue.addColorStop(0, 'blue');
+    gradientBlue.addColorStop(1, 'white');
+    var gradientGreen = ctxP1.createLinearGradient(0, 0, 700, 700);
+    gradientGreen.addColorStop(0, 'green');
+    gradientGreen.addColorStop(1, 'white');
+
+    
+    window.Chart = new Chart(ctxP1, {
+        type: 'doughnut',
         data: {
-            labels: ["today's complete", "today's left", "total left"],
+            labels: ["complete", "left"],
             datasets: [
                 {
-                    data: [todaysDone, todaysLeft, totalLeft],
-                    backgroundColor: ["green", "blue", "darkblue"],
-                    hoverBackgroundColor: ["lightgreen", "yellow", "darkblue"]
+                    data: [weekPtsGained, weekPtsLeft],
+                    backgroundColor: [gradientBlue, gradientGreen],
+                    hoverBackgroundColor: ["rgba(0,0,255,0.5)", "rgba(26, 168, 64, 0.6)"],
+                    hoverBorderWidth:[3,3],
+                    borderWidth:3
                 }
             ]
         },
         options: {
-            responsive: true
+            responsive: true,
+            legend:{
+                display:true,
+                position:"bottom",
+                labels:{
+                    boxWidth:20,
+                    fontSize:14
+                }
+            },
+            cutoutPercentage:40,
+            animation:{
+                easing: "easeOutBounce"
+            },
+            title:{
+                display:true,
+                text:"week",
+                position: "top",
+                lineHeight:1.5
+            }
         }    
     });
+
+    $('#weekPill').click(function(){
+      window.Chart.data.datasets[0].data[0] = weekPtsGained;
+      window.Chart.data.datasets[0].data[1] = weekPtsLeft;
+      window.Chart.options.title.text="week";
+      window.Chart.update();
+    });
+
+    $('#monthPill').click(function(){
+      window.Chart.data.datasets[0].data[0] = monthPtsGained;
+      window.Chart.data.datasets[0].data[1] = monthPtsLeft;
+      window.Chart.options.title.text="month";
+      window.Chart.update();
+    });
+
   };
 
   // get progress and create pie chart
   function PopulatePage(){
-      var ret = $.ajax(
+      $.ajax(
               {
                   type:"GET",
                   url:"/Home/GetProgress",
                   success: function(data){
-                      
-                      var completeArray = CalculateHabitsComplete(data);
-                      CreatePieChartFromArray(completeArray);
+                      CreatePieChart(data);
                   }
               }
           );
-      return ret.success();
   };
 
-  //return array [habits complete (by time), total habits (by times)]
-  function CalculateHabitsComplete(data){
-      console.log(data);
-      var numberOfHabits = 0;
-      var habitsComplete = 0;
-      //cycle through each habit
-      for(var entityIndex=0;entityIndex<data.length;entityIndex++)
-        {
-          var entity = data[entityIndex];
-          var doneOrNot = entity.doneOrNot;
-          //cycle through each habit done or not
-          for(var doneOrNotIndex = 0; doneOrNotIndex<doneOrNot.length;doneOrNotIndex++)
+  function GetHabits(){
+      return $.ajax(
           {
-            numberOfHabits+=1;
-            if(doneOrNot[doneOrNotIndex]==1)
-            {
-              habitsComplete+=1;
-            };
-          };
-        };
-      var completeArray = [habitsComplete,numberOfHabits];
-      return completeArray;
+              type:"GET",
+              url:"/Habit/GetHabitsForProfile",
+              dataType:"json"
+          }
+      )
   };
 
+  function ListHabits(results)
+  {
+      for(let i =0; i<results.length;i++){
+        var newListItem = document.createElement("li");
+        newListItem.innerText=results[i].name;
+        $('#habitListDropdown')[0].appendChild(newListItem);
+        }
+
+  }
 
   function FormatPage(){
     //$('#mainCard')[0].className='main';
@@ -111,4 +166,8 @@
 
 </script>
 
-
+<script src="~/js/chart/Chart.min.js"></script>
+<!-- legend: -->
+<!-- http://www.chartjs.org/docs/latest/configuration/legend.html -->
+<!-- easing cheatsheet: -->
+<!-- http://easings.net/ -->

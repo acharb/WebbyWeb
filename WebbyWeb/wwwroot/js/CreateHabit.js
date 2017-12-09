@@ -101,7 +101,7 @@ $('#HabitForm').on("submit",function(event){
                 }
             }
         );
-        UpdateProgress();
+        UpdateProgress(timesArray.length);
         $('#habit').val("");    //clear habit name input textbox
         $('#InputTime').val("");
         $('#HabitDescription').val("");
@@ -110,12 +110,13 @@ $('#HabitForm').on("submit",function(event){
         doneOrNot="";   // clear done or not
 });
 
-function UpdateProgress()
+function UpdateProgress(numOfTimes)
 {
     $.ajax(
     {
         type:"POST",
-        url:"/Home/AddHabitToProgress"
+        url:"/Home/AddHabitToProgress",
+        data: {numOfTimes}
 
     });
 }

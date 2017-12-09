@@ -38,6 +38,7 @@ namespace WebbyWeb.Controllers
         }
         public IActionResult Welcome()  //welcome page
         {
+            UpdateDayTracker("Welcome");
             return View();
         }
 
@@ -53,7 +54,6 @@ namespace WebbyWeb.Controllers
             return View("NotLoggedIn");
         }
 
-    
         public IActionResult SaveHabit(Models.Habit Habit)
         {
             Console.WriteLine(Habit.Name);
@@ -122,7 +122,7 @@ namespace WebbyWeb.Controllers
 
                 if(result.Succeeded)
                 {
-                    UpdateDayTracker();
+                    //UpdateDayTracker();
                     return View("Welcome");
                 }
 
@@ -134,7 +134,7 @@ namespace WebbyWeb.Controllers
             return View(profile);
 
         }
-        public void UpdateDayTracker()
+        public IActionResult UpdateDayTracker(string source)
         {
             WebbyWeb.Models.Progress progress = GetProgress();
             DateTime oldDate = progress.DateTracker; //old date
@@ -147,8 +147,18 @@ namespace WebbyWeb.Controllers
             {
                 ResetDoneOrNotForProfile();
                 progress.DayTracker=span;
+                try
+                {
+                    _context.Update(progress);
+                    _context.SaveChanges();
+                }
+                catch(Exception exc)
+                {throw exc;}
             }
+            ViewBag.DayTracker = progress.DayTracker;
+            return RedirectToAction(source,"Home");
         }
+
         //resetting all DoneOrNot to undone ( 0s )
         public void ResetDoneOrNotForProfile()
         {
@@ -255,13 +265,13 @@ namespace WebbyWeb.Controllers
                 throw exc;
             }
         }
-        public async Task<IActionResult> AddHabitToProgress()
+        public async Task<IActionResult> AddHabitToProgress(int numOfTimes)
         {
             WebbyWeb.Models.Progress progress = GetProgress();
             progress.NumOfHabits +=1;
 
-            progress.WeeklyPtsPossible = progress.WeeklyPtsPossible + (7-progress.DayTracker)*1;
-            progress.MonthlyPtsPossible = progress.MonthlyPtsPossible + (30-progress.DayTracker)*1;
+            progress.WeeklyPtsPossible = progress.WeeklyPtsPossible + (7-progress.DayTracker)*numOfTimes;
+            progress.MonthlyPtsPossible = progress.MonthlyPtsPossible + (30-progress.DayTracker)*numOfTimes;
             try
             {
                 _context.Update(progress);

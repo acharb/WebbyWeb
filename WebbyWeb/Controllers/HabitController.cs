@@ -50,6 +50,21 @@ namespace WebbyWeb.Controllers
             return habit;
         }
 
+        public async Task<IEnumerable<WebbyWeb.Models.Habit>> GetHabitsForProfile()
+        {
+            try
+            {
+                var profileName = User.Identity.Name;
+                var habits = await _context.Habit.Where(x=> x.ProfileName == profileName).ToListAsync();
+                return habits;
+            }
+            catch(Exception exc)
+            {
+                throw exc;
+            }
+            
+        }
+
         //GET: Habit/Create
         public IActionResult Create()
         {
@@ -132,6 +147,7 @@ namespace WebbyWeb.Controllers
         }
 
         //Edit Habit in DB
+        //[Bind("Description,DoneOrNot,ID,Name,ProfileName,Time")] 
         [HttpPost]
         public void EditHabit(Habit habit)
         {
@@ -142,7 +158,7 @@ namespace WebbyWeb.Controllers
                     _context.Update(habit);
                     _context.SaveChangesAsync();
                 }
-                catch (SystemException exc)
+                catch (System.Exception exc)
                 {
                     throw exc;
                 }

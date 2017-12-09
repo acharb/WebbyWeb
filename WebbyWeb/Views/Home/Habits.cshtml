@@ -15,13 +15,13 @@
         <div style="text-align:right">
             <div class="btn-group dropdown">
                 <div class="col-sm-9"></div>
-                <button class="btn btn-simple dropdown-toggle" style="font-size:large;" data-toggle="dropdown">
-                    <span style="text-transform:lowercase"> @ViewBag.DayTracker days in  </span> 
-                    <b class="caret"></b>
+                <a class="btn btn-simple dropdown" data-toggle="dropdown" style="text-transform:lowercase;font-size:large;">
+                        <span style="text-transform:lowercase"> @ViewBag.DayTracker days in  </span> 
+                        <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu" >
                     <li>
-                        <a style="text-transform:lowercase">update</a>
+                        <a href="@Url.Action("UpdateDayTracker","Home", new {source = "Habits"})" style="text-transform:lowercase">update</a>
                     </li>
                     <li>
                         <a style="text-transform:lowercase">reset</a>
@@ -31,6 +31,8 @@
         </div>
         <h2 style='font-weight:bold; text-align:center'>daily</h2>
     </header>
+    
+
 
     <div id="calendar">
         <ul class="Times">
@@ -97,15 +99,12 @@
     </tbody>
 </table>
 
-
-
 <script>
 
 // ---------------------CLUES-----------------------
 //button elements have id: entity # from DB + 'event'+ index of time
 //time elements (list items) have id: hour (military time) + 'time'
 //each button element has a value attribute telling if complete or not (true or false)
-
 
 var numberOfHabits=0;
 var habitsComplete=0;
@@ -196,9 +195,10 @@ function loadCalendar(){
         };
         if(hour==0){hour=12;}
         //creating times for calendar. Each time gets an ID of their military time.
-        $('.Times').append('<li id='+hourId+'time><div class="Time" >'+ hour +amOrPm+'</div> <div class="col-md-1"></div> </li><br>');//id is military time
+        $('.Times').append('<li style="white-space: nowrap; overflow: scroll" id='+hourId+'time><div class="Time" >'+ hour +amOrPm+'</div> <div class="col-md-1"></div> </li><br>');//id is military time
     }
 }; 
+
 
 //format time to be displayed, given as string
 function FormatTime(time)
@@ -342,8 +342,10 @@ function getButtonHeight(timeDisplay)
 {
     var minHeight = 0;
     var maxHeight = 40;
-
-    var minute = timeDisplay.slice(3,);
+    
+    //getting minute value, eg. "12:59 pm" gives "59"
+    var colon = timeDisplay.search(":");
+    var minute = timeDisplay.slice(colon+1,colon+3);
     
     
     var ret = Math.round((minute / 60)*40);
@@ -404,6 +406,7 @@ function loadHabitCompletions()
     
     
 
+
 //gets single habit from controller
 function getHabit(habitId){//returns either the habit or null if not there
     var ret= $.ajax(
@@ -426,34 +429,47 @@ function getHabit(habitId){//returns either the habit or null if not there
 //POST habit to DB
 function postHabit(id,habitContainer,givenDoneOrNot)
 {
-    var token = $("[name='__RequestVerificationToken']").val();
-    var habit= {
-                    ID:id,
-                    Name: habitContainer.name,
-                    Time: habitContainer.time,
+    //var token = $("[name='__RequestVerificationToken']").val();
+    /*var habitJson= JSON.stringify({
                     Description: habitContainer.description,
                     DoneOrNot: habitContainer.doneOrNot,
-                    ProfileName: habitContainer.profileName
-                    
-                };
-    $.ajax(
+                    ID:id,
+                    Name: habitContainer.name,
+                    ProfileName: habitContainer.profileName,
+                    Time: habitContainer.time
+                });*/
+    //console.log(habitJson);
+    /*$.ajax(
             {
                 method:"POST",
-                url:"/Habit/EditHabit/",
-                data: habit,
-                //contentType:"application/json; charset=utf-8",
-                error: function (xhr, ajaxOptions, thrownError) {
-                    
+                url:"@Url.Action("EditHabit","Habit")",// "/Habit/EditHabit/",
+                data: {
+                    Description: habitContainer.description,
+                    DoneOrNot: habitContainer.doneOrNot,
+                    ID:id,
+                    Name: habitContainer.name,
+                    ProfileName: habitContainer.profileName,
+                    Time: habitContainer.time},
+                //contentType:"application/json; charset=utf-8;",
+                error: function (data, ajaxOptions, thrownError) {
+                    //console.log(data);
                     console.log(ajaxOptions.toString());
                     console.log(thrownError.toString());
                 },
                 success: function(){
                     console.log('updated Habit');
-                    //AdjustPointsToProgress(givenDoneOrNot);
+                    AdjustPointsToProgress(givenDoneOrNot);
                     }
                 
             }
-        )
+        )*/
+        $.post("@Url.Action("EditHabit","Habit")",{
+                    Description: habitContainer.description,
+                    DoneOrNot: habitContainer.doneOrNot,
+                    ID:id,
+                    Name: habitContainer.name,
+                    ProfileName: habitContainer.profileName,
+                    Time: habitContainer.time});
 };
 
 //get all habits from controller
@@ -525,7 +541,7 @@ function buttonClick(elementId,habitId) //when habit button clicked, pulling dat
         $('#'+elementId)[0].style.backgroundColor='blue';
         $('#'+elementId)[0].style.opacity='1';
         updateHabit(habitId,0);
-        //AdjustPointsToProgress(0);
+        AdjustPointsToProgress(0);
         window.habitsComplete -=1;
     };
     if(check=='false'){   //if habit not done
@@ -534,7 +550,7 @@ function buttonClick(elementId,habitId) //when habit button clicked, pulling dat
         $('#'+elementId)[0].style.backgroundColor='rgb(0, 200, 105)';
         $('#'+elementId)[0].style.opacity='.6';
         updateHabit(habitId,1);
-        //AdjustPointsToProgress(1);
+        AdjustPointsToProgress(1);
         window.habitsComplete +=1;
     };
     updateProgressBar();
