@@ -199,7 +199,7 @@ namespace WebbyWeb.Controllers
         }
         public async Task<IActionResult> ForgotPassword(string email)
         {
-            ApplicationUser user = await _context.ApplicationUser.Where(x=>x.Email == "aleccharb21@gmail.com").FirstOrDefaultAsync();
+            ApplicationUser user = await _userManager.FindByEmailAsync(email);
             
             await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
