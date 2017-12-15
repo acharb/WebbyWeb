@@ -4,12 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-<!-- <div class="progress" style="height:40px;border-radius:15px">
-    <div class="progress-bar" style="text-align:right;background-color:blue;border-radius:15px;width:30%;text-align: center;font-style: inherit;font-size: medium;padding-top: 7px;" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
-	<span >30% </span>
-	</div>
-</div> -->
-
 <div id="calendar-container">
     <header>
         <div style="text-align:right">
@@ -31,101 +25,364 @@
         </div>
         <h2 style='font-weight:bold; text-align:center'>daily</h2>
     </header>
-    
-
 
     <div id="calendar">
         <ul class="Times">
-            
+            <!-- calendar populated with script -->
         </ul>
     </div>
 </div>
 
-
-@{
-    int count=0;
-}
-<table class="table" id='table'>
-    <thead>
-        <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ID)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Time)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-			    <th>
-                    @Html.DisplayNameFor(model => model.DoneOrNot)
-                </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        count+=1;
-        <tr id= @count>
-            <td id='Name'>
-                
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td id='HabitId'>
-                
-                @Html.DisplayFor(modelItem => item.ID)
-            </td>
-            <td id='HabitTime'>
-                @Html.DisplayFor(modelItem => item.Time)
-            </td>
-            <td id='HabitDescr'>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-			<td id='HabitDoneOrNot'>
-                @Html.DisplayFor(modelItem => item.DoneOrNot)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-            
-        </tr>
-
-}
-    </tbody>
-</table>
-
 <script>
+    const habitsArray = [];
+    const habitTracker={
+        done: 0,
+        total:0
+    }
+</script>
 
-// ---------------------CLUES-----------------------
-//button elements have id: entity # from DB + 'event'+ index of time
-//time elements (list items) have id: hour (military time) + 'time'
-//each button element has a value attribute telling if complete or not (true or false)
+@foreach (var item in Model) {
+    <script>
+        
+        habitsArray.push({
+            name:"@item.Name",
+            id:"@item.ID",
+            time:"@item.Time",
+            description:"@item.Description",
+            doneOrNot:"@item.DoneOrNot"
+        });
+    </script>
+}
+<script>
+$(function(){
+    format.LoadCalendar();
+    events.LoadEvents();
+    format.FormatPage();
+    format.HideExtraTimes();
+    format.LoadProgressBar();
+    format.UpdateProgressBar();
 
-var numberOfHabits=0;
-var habitsComplete=0;
-loadCalendar();
-loadEvents();
-FormatPage();
-HideExtraTimes();
-
-loadProgressBar(window.habitsPercentComplete);
-loadHabitCompletions();
-updateProgressBar();
-
-$(document).ready(function(){
-    $('#table')[0].style.display='none';
+    $('[data-toggle="popover"]').popover();
 });
 
-function FormatPage()
+const format = 
+{
+    LoadCalendar()
+    {
+        const start = 1;
+        const end = 24;
+        const offset=6;
+
+        for (let i = start;i<=end;i++){
+            let hour = i+offset;
+            let hourId=i+offset;
+            let amOrPm = ' am';
+            if(hour>=12 && hour<24){
+                hour=i+offset-12;
+                amOrPm=' pm';
+            };
+            if(hour>=24){
+                hour=i+offset-24;
+                hourId=hourId-24;
+                amOrPm=' am';
+            };
+            if(hour==0){hour=12;}
+            //creating times for calendar. Each time gets an ID of their military time.
+            $('.Times').append('<li style="white-space: nowrap; overflow: scroll" id='+hourId+'time><div class="Time" >'+ hour +amOrPm+'</div> <div class="col-md-1"></div> </li><br>');//id is military time
+        }
+    },
+    FormatPage()
+    {
+        $('#mainCard')[0].style='background:white;margin: 0px 200px 10px;';
+        const add= document.createElement('div');
+        add.className='main-raised';
+        add.setAttribute('data-spy','affix');
+        add.setAttribute('data-offset-top',"70"); // when progress bar becomes affixed
+        add.style='margin: 20px 210px 0px;height: 40px;border-radius: 30px;background-color: rgb(250, 250, 250);z-index: 4;width: -webkit-fill-available';
+        
+        add.id='ProgressBarCard';
+        $('.header')[0].style="min-height: 70px";
+        $('.header')[0].append(add);
+    },
+    HideExtraTimes()
+    {
+        const startTime = 21;
+        const endTime = 6
+        let timeCount =startTime;
+
+        while(timeCount<=endTime+24)
+        {
+            adjustedCount=timeCount;
+            if (timeCount>=24)
+            {
+                adjustedCount = timeCount-24;
+            }
+            if($('#'+adjustedCount+'time')[0].children.length==2){ //if calendar element has only 2 children aka no habits
+                $('#'+adjustedCount+'time')[0].style.display='none';
+            }
+            timeCount+=1;
+        }
+    },
+    LoadProgressBar()
+    {
+        let addDiv = document.createElement('div');
+        let percentComplete=Math.round((habitTracker.done/ habitTracker.total)*100)
+        addDiv.className='progress-bar'
+        addDiv.style='text-align:right;width:100%;background-color:blue;border-radius:30px;text-align: center;font-style: inherit;font-size: medium;padding-top: 7px;';
+        addDiv.id='ProgressBar';
+        addDiv.setAttribute('role','progressbar');
+        addDiv.setAttribute('aria-valuenow','60');
+        addDiv.setAttribute('aria-valuemin','0');
+        addDiv.setAttribute('aria-valuemax','100');
+        addDiv.style.width=percentComplete +'%';
+        addDiv.innerText=percentComplete +'%';
+        $('#ProgressBarCard').append(addDiv);
+    },
+    UpdateProgressBar()
+    {
+        var newPercentComplete = Math.round((habitTracker.done/ habitTracker.total)*100);
+        if(habitTracker.total==0)
+            newPercentComplete=0;
+        $('#ProgressBar')[0].style.width=newPercentComplete +'%';
+        $('#ProgressBar')[0].innerText=newPercentComplete +'%';
+    },
+    FormatTime(time)
+    {
+        let timeFirstTwo = time.slice(0,2);
+        let timeDisplay;
+        if(timeFirstTwo <=11)
+        {
+            timeDisplay = time +' am';
+            if(timeDisplay[0] == 0){
+                timeDisplay = timeDisplay.slice(1,);
+            }
+        }
+        if(timeFirstTwo >12)
+        {
+            timeDisplay = (timeFirstTwo-12) +time.slice(2,) + ' pm';
+        }
+        if(timeFirstTwo==12)
+        {
+            timeDisplay = time+' pm';
+        }
+        if(timeFirstTwo==00){
+            timeDisplay = '12' +time.slice(2,) +'am';
+        }
+
+        return timeDisplay;
+    }
+}
+
+const events = 
+{
+    LoadEvents()
+    {
+        let habitMap;
+        let count=1;
+        //cycling through each habit (each row of hidden habit table is habit)
+
+        habitsArray.forEach(function(habit,index){
+            let timeArray = (habit.time.split(',')).filter(x => x!=""); //filter out empty element
+            let name = habit.name;
+            let descrip= habit.description;
+            let dBId=habit.id;
+            let doneOrNot = habit.doneOrNot;
+
+            timeArray.forEach(function(time,timeArrayIndex){
+                habitTracker.total +=1; // add 1 to number of habits
+                let timeFirstTwo = time.slice(0,2);
+                if(timeFirstTwo[0]==0)
+                    timeFirstTwo[0]=timeFirstTwo[1];
+                let timeDisplay = format.FormatTime(time); //timeDisplay format: hh:mm eg. 09:00
+                events.CreateButton(name,timeFirstTwo,timeDisplay,dBId,timeArrayIndex,descrip,doneOrNot[timeArrayIndex]);
+                })
+            return
+        })
+    },
+
+    CreateButton(name,timeFirstTwo,timeDisplay,dBId,timeArrayIndex,description,doneOrNot)
+    {
+        let buttonId = dBId+'event'+timeArrayIndex; //eg. 1event3, 1 is primary key in DB, 3 is third time of habit
+        let newButton = document.createElement('BUTTON');
+        newButton.className='btn btn-custom';
+        newButton.id = buttonId;
+        //popup setup
+        newButton.setAttribute('data-toggle','popover');
+        newButton.setAttribute('data-trigger','hover');
+        newButton.setAttribute('data-placement','bottom');
+        newButton.title=timeDisplay;
+        newButton.setAttribute('data-content',description);
+        newButton.setAttribute('data-container','body');
+        //style
+        newButton.style = 'position:relative;font-size:large;white-space:normal;padding:inherit;height: 70px;width:120px; text-align:center; margin: 0px 10px 0px 10px; text-transform:lowercase;';
+        newButton.style.boxShadow='0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)';
+        //height according to time
+        let btnHeight = this.GetButtonHeight(timeDisplay);                        
+        newButton.style.top=btnHeight +'px';
+        //inner Text
+        newButton.innerHTML=name;
+        this.AddInOrder(newButton,timeFirstTwo,btnHeight);
+        if(doneOrNot==1) //habit says done in DB
+        {
+            newButton.value='true';
+            newButton.style.backgroundColor='rgb(0, 200, 105)';
+            habitTracker.done+=1;
+        }
+        else
+        {
+            newButton.value='false',
+            newButton.style.backgroundColor='blue';
+        }
+        //when habit clicked
+        $('#'+buttonId)[0].addEventListener('click',function(){events.ButtonClick(buttonId)});   
+    },
+
+    ButtonClick(buttonId)
+    {
+        const done = $('#'+buttonId)[0].value;  //get button value, false= unchecked, true= checked
+
+        if(done=="true"){   //if habit done
+            $('#'+buttonId)[0].value='false';
+            $('#'+buttonId)[0].style.backgroundColor='blue';
+            $('#'+buttonId)[0].style.opacity='1';
+            Ajax.UpdateHabit(buttonId,0);
+            Ajax.AdjustPointsToProgress(0);
+            habitTracker.done -=1;
+        }
+        else{   //if habit not done
+            $('#'+buttonId)[0].value='true';
+            $('#'+buttonId)[0].style.backgroundColor='rgb(0, 200, 105)';
+            $('#'+buttonId)[0].style.opacity='.6';
+            Ajax.UpdateHabit(buttonId,1);
+            Ajax.AdjustPointsToProgress(1);
+            habitTracker.done +=1;}
+        format.UpdateProgressBar();
+    },
+    
+    AddInOrder(newButton,timeFirstTwo,btnHeight)
+    {
+        let neededSectionHeight = 0;
+        let liArray = $('#'+timeFirstTwo+'time').children().filter((x,y)=>y.localName=="button");
+        if(liArray.length>0)
+        {
+            for(let i=liArray.length-1;i>=0;i--)
+            {
+                let targetButton = liArray[i];
+                let targetHeight = targetButton.style.top.slice(0,2);
+                if(targetHeight[1]=='p')
+                    targetHeight=targetHeight[0];
+                if(btnHeight>=targetHeight)
+                {
+                    targetButton.after(newButton);
+                    neededSectionHeight = targetHeight;
+                    break;
+                }
+                else if(i==0)
+                    targetButton.before(newButton);
+            }
+        }
+        else
+        {
+            $('#'+timeFirstTwo+'time').append(newButton);
+            neededSectionHeight=btnHeight;
+        };
+        //adjust section height
+        let defaultHeightWithButton=100;
+        let currentSectionHeight= $('#'+timeFirstTwo+'time')[0].style.height.slice(0,3); //will always be 3 digit height
+        let newSectionHeight = defaultHeightWithButton + neededSectionHeight;
+        if(currentSectionHeight > newSectionHeight)
+            $('#'+timeFirstTwo+'time')[0].style.height=currentSectionHeight +'px';
+        else
+            $('#'+timeFirstTwo+'time')[0].style.height=newSectionHeight +'px';
+    },
+    GetButtonHeight(timeDisplay)
+    {
+        const minHeight = 0;
+        const maxHeight = 40;
+        //getting minute value, eg. "12:59 pm" gives "59"
+        const colon = timeDisplay.search(":");
+        const minute = timeDisplay.slice(colon+1,colon+3);
+        const ret = Math.round((minute / 60)*40);
+        return ret;
+    }
+
+};
+
+const Ajax = 
+{
+    UpdateHabit(habitId,givenDoneOrNot)
+    {
+        let idTimeSplit = habitId.split('event');
+        let id = idTimeSplit[0];
+        let indexOfTime = idTimeSplit[1];
+
+        $.when( this.GetHabit(id) )
+        .then(function (habitContainer)
+        {   
+            let token = $("[name='__RequestVerificationToken']").val();
+            let hold = habitContainer.doneOrNot.split('');  //changing binary string
+            hold[indexOfTime]=givenDoneOrNot;
+            habitContainer.doneOrNot=hold.join('');
+            $.ajax({
+                method:"POST",
+                url:"@Url.Action("EditHabit","Habit")",
+                data:{
+                    Description: habitContainer.description,
+                    DoneOrNot: habitContainer.doneOrNot,
+                    ID:id,
+                    Name: habitContainer.name,
+                    ProfileName: habitContainer.profileName,
+                    Time: habitContainer.time
+                    },
+                success: function(){console.log('progress updated')},
+                error: function (ajaxOptions, thrownError)
+                {
+                    console.log(ajaxOptions);
+                    console.log(thrownError.toString());
+                },
+                })
+        })
+    },
+    GetHabit(id)
+    {
+        return $.ajax(
+            {
+                type:"GET",
+                url:"/Habit/Details/"+id,
+                error: function (xhr, ajaxOptions, thrownError) {
+                    
+                    console.log(ajaxOptions.toString());
+                    console.log(thrownError.toString());
+                },
+                success: function(data){
+                    return data;
+                }
+            }
+        );
+    },
+    AdjustPointsToProgress(doneOrNot)
+    {
+        $.ajax(
+         {
+             method:"POST",
+             url:"@Url.Action("AdjustPointsToProgress","Home")",
+             data:{doneOrNot},
+             error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(ajaxOptions);
+                    console.log(thrownError.toString());
+                },
+             success: function(){console.log('progress updated')}
+         }
+        ) 
+    }
+}
+
+
+/*function FormatPage()
 {
     $('#mainCard')[0].style='background:white;margin: 0px 200px 10px;';
     
-    var add= document.createElement('div');
+    const add= document.createElement('div');
     add.className='main-raised';
     add.setAttribute('data-spy','affix');
     add.setAttribute('data-offset-top',"70"); // when progress bar becomes affixed
@@ -134,13 +391,12 @@ function FormatPage()
     add.id='ProgressBarCard';
     $('.header')[0].style="min-height: 70px";
     $('.header')[0].append(add);
-};
-
+};*/
+/*
 function HideExtraTimes(){
-    var startTime = 21;
-    var endTime = 6
-
-    var timeCount =startTime;
+    const startTime = 21;
+    const endTime = 6
+    let timeCount =startTime;
 
     while(timeCount<=endTime+24)
     {
@@ -155,8 +411,8 @@ function HideExtraTimes(){
         timeCount+=1;
     }
 
-};
-
+};*/
+/*
 function loadProgressBar(percentComplete)
 {
     var add = document.createElement('div');
@@ -173,8 +429,8 @@ function loadProgressBar(percentComplete)
     add.innerText=percentComplete +'%';
 
     $('#ProgressBarCard').append(add);
-};
-
+};*/
+/*
 function loadCalendar(){        
     var start = 1;
     var end = 24;
@@ -197,35 +453,36 @@ function loadCalendar(){
         //creating times for calendar. Each time gets an ID of their military time.
         $('.Times').append('<li style="white-space: nowrap; overflow: scroll" id='+hourId+'time><div class="Time" >'+ hour +amOrPm+'</div> <div class="col-md-1"></div> </li><br>');//id is military time
     }
-}; 
-
+}; */
 
 //format time to be displayed, given as string
+/*
 function FormatTime(time)
 {
-    var timeFirstTwo = time.slice(0,2);
+    let timeFirstTwo = time.slice(0,2);
+    let timeDisplay;
     if(timeFirstTwo <=11)
     {
-        var timeDisplay = time +' am';
+        timeDisplay = time +' am';
         if(timeDisplay[0] == 0){
             timeDisplay = timeDisplay.slice(1,);
         }
     }
     if(timeFirstTwo >12)
     {
-        var timeDisplay = (timeFirstTwo-12) +time.slice(2,) + ' pm';
+        timeDisplay = (timeFirstTwo-12) +time.slice(2,) + ' pm';
     }
     if(timeFirstTwo==12)
     {
-        var timeDisplay = time+' pm';
+        timeDisplay = time+' pm';
     }
     if(timeFirstTwo==00){
-        var timeDisplay = '12' +time.slice(2,) +'am';
+        timeDisplay = '12' +time.slice(2,) +'am';
     }
 
     return timeDisplay;
-}
-
+}*/
+/*
 function loadEvents (){
     var habitMap;
     var count=1;
@@ -336,8 +593,8 @@ function loadEvents (){
                     window.numberOfHabits+=1;
                     };
                 };   
-};
-
+};*/
+/*
 function getButtonHeight(timeDisplay)
 {
     var minHeight = 0;
@@ -351,9 +608,9 @@ function getButtonHeight(timeDisplay)
     var ret = Math.round((minute / 60)*40);
     return ret;
 
-};
+};*/
 
-function loadHabitCompletions()
+/*function loadHabitCompletions()
 {
     var numberOfHabits = 0;
     var habitsComplete = 0;
@@ -407,7 +664,11 @@ function loadHabitCompletions()
     
 
 
+
+
+
 //gets single habit from controller
+/*
 function getHabit(habitId){//returns either the habit or null if not there
     var ret= $.ajax(
             {
@@ -424,8 +685,8 @@ function getHabit(habitId){//returns either the habit or null if not there
             }
         );
     return ret.success();
-};
-
+};*/
+/*
 //POST habit to DB
 function postHabit(id,habitContainer,givenDoneOrNot)
 {
@@ -462,7 +723,7 @@ function postHabit(id,habitContainer,givenDoneOrNot)
                     }
                 
             }
-        )*/
+        )
         $.post("@Url.Action("EditHabit","Habit")",{
                     Description: habitContainer.description,
                     DoneOrNot: habitContainer.doneOrNot,
@@ -470,8 +731,8 @@ function postHabit(id,habitContainer,givenDoneOrNot)
                     Name: habitContainer.name,
                     ProfileName: habitContainer.profileName,
                     Time: habitContainer.time});
-};
-
+};*/
+/*
 //get all habits from controller
 function getAllHabits()
 {
@@ -485,9 +746,10 @@ function getAllHabits()
             }
         );
     return ret.success();
-};
+};*/
 
 //update Habit in DB (uses getHabit and posthabit)
+/*
 function updateHabit(habitId,givenDoneOrNot){
     
     let idTimeSplit = habitId.split('event');
@@ -517,8 +779,8 @@ function updateHabit(habitId,givenDoneOrNot){
         
         postHabit(id,habitContainer,givenDoneOrNot); 
     })*/
-};
-
+//};
+/*
 function updateProgressBar()
 {
     var newPercentComplete = Math.round((window.habitsComplete / window.numberOfHabits)*100);
@@ -527,8 +789,8 @@ function updateProgressBar()
     }
     $('#ProgressBar')[0].style.width=newPercentComplete +'%';
     $('#ProgressBar')[0].innerText=newPercentComplete +'%';
-};
-
+};*/
+/*
 //Habit button click
 function buttonClick(elementId,habitId) //when habit button clicked, pulling data from Map (dictionary)
 {
@@ -554,8 +816,8 @@ function buttonClick(elementId,habitId) //when habit button clicked, pulling dat
         window.habitsComplete +=1;
     };
     updateProgressBar();
-}; 
-
+}; */
+/*
 function AdjustPointsToProgress(doneOrNot)
 {
     $.ajax(
@@ -571,5 +833,5 @@ function AdjustPointsToProgress(doneOrNot)
              success: function(){console.log('progress updated')}
          }
      )   
-}
+}*/
 </script>

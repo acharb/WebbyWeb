@@ -118,7 +118,7 @@ namespace WebbyWeb.Controllers
             {
                 //saves login info as cookie if .RememberMe is true, else false. Last parameter doesn't lock user out if login fail
 
-                var result = await _signInManager.PasswordSignInAsync(profile.UserName, profile.Password, rememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(profile.Email, profile.Password, rememberMe, false);
 
                 if(result.Succeeded)
                 {
@@ -202,12 +202,12 @@ namespace WebbyWeb.Controllers
             if (ModelState.IsValid)
             {
 
-                var user = new ApplicationUser { UserName = profile.UserName, };
+                var user = new ApplicationUser { UserName = profile.Email, Email=profile.Email };
                 var result = await _userManager.CreateAsync(user, profile.Password);
 
                 if (result.Succeeded)
                 {
-                    int add = AddProgressProfile(profile.UserName);
+                    int add = AddProgressProfile(profile.Email);
                     await _signInManager.SignInAsync(user, false); //signs in if registrationw orks, not persistent, logs out if page left
                     return RedirectToAction("Welcome");
                 }
@@ -322,3 +322,4 @@ namespace WebbyWeb.Controllers
         }
     }
 }
+
