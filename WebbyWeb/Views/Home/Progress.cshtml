@@ -37,9 +37,12 @@
 </div>
 
 <script>
-  FormatPage();
-  PopulatePage();
-  GetHabits().then(ListHabits);
+    $(function(){
+        FormatPage();
+        PopulatePage();
+        GetHabits().then(ListHabits);
+    })
+  
 
   function CreatePieChart(data){
 

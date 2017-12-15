@@ -7,6 +7,8 @@ using WebbyWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using System.Net.Mail;
+using System.Net.Http;
 
 namespace WebbyWeb.Controllers
 {
@@ -161,7 +163,7 @@ namespace WebbyWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([Bind("UserName,Password")] Profile profile) //binding to Profile class
+        public async Task<IActionResult> Login([Bind("Email,Password")] Profile profile) //binding to Profile class
         {
             bool rememberMe=false;
             if(Request.Form["RememberMe"].ToString()=="on")
@@ -195,14 +197,21 @@ namespace WebbyWeb.Controllers
         }
         public IActionResult ForgotPassword()
         {
+            
             return View();
         }
-        public async Task<IActionResult> ForgotPassword(string email)
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(RegistrationViewModel model)
         {
-            ApplicationUser user = await _userManager.FindByEmailAsync(email);
-            
-            await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user,token,model.Password);
 
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Login");
+            }
+            return View("Error");
         }
         public IActionResult Register()
         {
