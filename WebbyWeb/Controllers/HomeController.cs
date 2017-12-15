@@ -102,38 +102,7 @@ namespace WebbyWeb.Controllers
             return View("NotLoggedIn");
         }
 
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Login([Bind("UserName,Password")] Profile profile) //binding to Profile class
-        {
-            bool rememberMe=false;
-            if(Request.Form["RememberMe"].ToString()=="on")
-                rememberMe = true;
-
-            if (ModelState.IsValid)
-            {
-                //saves login info as cookie if .RememberMe is true, else false. Last parameter doesn't lock user out if login fail
-
-                var result = await _signInManager.PasswordSignInAsync(profile.Email, profile.Password, rememberMe, false);
-
-                if(result.Succeeded)
-                {
-                    //UpdateDayTracker();
-                    return View("Welcome");
-                }
-
-                ModelState.AddModelError("","Invalid Login Attempt");
-                return View(profile);
-
-            }
-            
-            return View(profile);
-
-        }
+        
         public IActionResult UpdateDayTracker(string source)
         {
             WebbyWeb.Models.Progress progress = GetProgress();
@@ -186,11 +155,54 @@ namespace WebbyWeb.Controllers
                 }
             }
         }
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login([Bind("UserName,Password")] Profile profile) //binding to Profile class
+        {
+            bool rememberMe=false;
+            if(Request.Form["RememberMe"].ToString()=="on")
+                rememberMe = true;
+
+            if (ModelState.IsValid)
+            {
+                //saves login info as cookie if .RememberMe is true, else false. Last parameter doesn't lock user out if login fail
+
+                var result = await _signInManager.PasswordSignInAsync(profile.Email, profile.Password, rememberMe, false);
+
+                if(result.Succeeded)
+                {
+                    //UpdateDayTracker();
+                    return View("Welcome");
+                }
+
+                ModelState.AddModelError("","Invalid Login Attempt");
+                return View(profile);
+
+            }
+            
+            return View(profile);
+
+        }
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             
             return RedirectToAction("Index", "Home");
+        }
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            ApplicationUser user = await _context.ApplicationUser.Where(x=>x.Email == "aleccharb21@gmail.com").FirstOrDefaultAsync();
+            
+            await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
         }
         public IActionResult Register()
         {

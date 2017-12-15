@@ -37,7 +37,7 @@ namespace WebbyWeb.Controllers
             {
                 //saves login info as cookie if .RememberMe is true, else false. Last parameter doesn't lock user out if login fail
 
-                var result = await _signInManager.PasswordSignInAsync(profile.UserName, profile.Password, rememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(profile.Email, profile.Password, rememberMe, false);
 
                 if(result.Succeeded)
                     return RedirectToAction("Habits", "Home");
@@ -62,7 +62,7 @@ namespace WebbyWeb.Controllers
             if (ModelState.IsValid)
             {
 
-                var user = new ApplicationUser { UserName = profile.UserName, };
+                var user = new ApplicationUser { UserName = profile.Email, };
                 var result = await _userManager.CreateAsync(user, profile.Password);
 
                 if (result.Succeeded)
