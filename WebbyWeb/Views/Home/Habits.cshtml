@@ -202,8 +202,8 @@ const events =
             timeArray.forEach(function(time,timeArrayIndex){
                 habitTracker.total +=1; // add 1 to number of habits
                 let timeFirstTwo = time.slice(0,2);
-                if(timeFirstTwo[0]==0)
-                    timeFirstTwo[0]=timeFirstTwo[1];
+                if(timeFirstTwo[0]=="0")
+                    timeFirstTwo=timeFirstTwo[1];
                 let timeDisplay = format.FormatTime(time); //timeDisplay format: hh:mm eg. 09:00
                 events.CreateButton(name,timeFirstTwo,timeDisplay,dBId,timeArrayIndex,descrip,doneOrNot[timeArrayIndex]);
                 })
@@ -281,11 +281,11 @@ const events =
                 let targetButton = liArray[i];
                 let targetHeight = targetButton.style.top.slice(0,2);
                 if(targetHeight[1]=='p')
-                    targetHeight=targetHeight[0];
+                    targetHeight=parseInt(targetHeight[0]);
                 if(btnHeight>=targetHeight)
                 {
                     targetButton.after(newButton);
-                    neededSectionHeight = targetHeight;
+                    neededSectionHeight = btnHeight;
                     break;
                 }
                 else if(i==0)
