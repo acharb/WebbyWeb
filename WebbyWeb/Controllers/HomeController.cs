@@ -178,7 +178,7 @@ namespace WebbyWeb.Controllers
                 if(result.Succeeded)
                 {
                     //UpdateDayTracker();
-                    return View("Habits");
+                    return RedirectToAction("Habits");
                 }
 
                 ModelState.AddModelError("","Invalid Login Attempt");
@@ -230,7 +230,7 @@ namespace WebbyWeb.Controllers
                 {
                     int add = AddProgressProfile(profile.Email);
                     await _signInManager.SignInAsync(user, false); //signs in if registrationw orks, not persistent, logs out if page left
-                    return RedirectToAction("Welcome");
+                    return RedirectToAction("Habits");
                 }
                 else
                 {

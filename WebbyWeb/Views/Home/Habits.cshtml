@@ -53,6 +53,10 @@
         });
     </script>
 }
+
+
+<canvas id="ChartCanvas"></canvas>
+
 <script>
 $(function(){
     format.LoadCalendar();
@@ -126,9 +130,16 @@ const format =
     LoadProgressBar()
     {
         let addDiv = document.createElement('div');
-        let percentComplete=Math.round((habitTracker.done/ habitTracker.total)*100)
-        addDiv.className='progress-bar'
-        addDiv.style='text-align:right;width:100%;background-color:blue;border-radius:30px;text-align: center;font-style: inherit;font-size: medium;padding-top: 7px;';
+        let percentComplete=Math.round((habitTracker.done/ habitTracker.total)*100);
+        addDiv.className='progress-bar';
+
+        var ctxP1 = document.getElementById("ChartCanvas").getContext('2d');
+        var gradientBlue = ctxP1.createLinearGradient(0, 0, 700, 700);
+        gradientBlue.addColorStop(0, 'blue');
+        gradientBlue.addColorStop(1, 'white');
+    
+        addDiv.style='text-align:right;width:100%;border-radius:30px;text-align: center;font-style: inherit;font-size: medium;padding-top: 7px;';
+        addDiv.style.backgroundColor = ""linear-gradient(to bottom right, red, yellow)";
         addDiv.id='ProgressBar';
         addDiv.setAttribute('role','progressbar');
         addDiv.setAttribute('aria-valuenow','60');
