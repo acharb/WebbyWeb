@@ -178,7 +178,7 @@ namespace WebbyWeb.Controllers
                 if(result.Succeeded)
                 {
                     //UpdateDayTracker();
-                    return View("Welcome");
+                    return View("Habits");
                 }
 
                 ModelState.AddModelError("","Invalid Login Attempt");
