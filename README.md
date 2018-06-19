@@ -22,5 +22,5 @@
 <br><br>
 
 <h4> Keep track of your progress as the weeks and months go on </h4>
-<img src="Images/Week/MonthProgress.png" width="800" >
+<img src="Images/Week:Month%20Progress.png" width="800" >
 <br><br>
