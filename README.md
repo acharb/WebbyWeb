@@ -1,5 +1,5 @@
 # WebbyWeb
-.NET Application with Login/Register capabilities using Azure
+.NET Application with Login/Register capabilities using Microsoft Azure. Hosted on :http://webbyweb.azurewebsites.net/
 
 <h4> Register account, security from Azure Cloud Database </h4>
 <img src="Images/Register.png" width="300" >
